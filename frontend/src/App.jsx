@@ -194,9 +194,9 @@ function Partidos({ currentUser, matches, onMatchesChange }) {
   const [, forceUpdate] = useState(0)
   const refresh = () => forceUpdate(n => n + 1)
 
-  const handleBet = (matchId, localVal, visitorVal) => {
+  const handleBet = (matchId, localVal, visitorVal, amount = 0, potentialWin = 0) => {
     const userData = DB.getUserData(currentUser)
-    userData.bets[matchId] = { local: localVal, visitor: visitorVal }
+    userData.bets[matchId] = { local: localVal, visitor: visitorVal, amount, potentialWin }
     DB.saveUserData(userData)
     showToast('¡Pronóstico guardado!', '⚽')
     refresh()
