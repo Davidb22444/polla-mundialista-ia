@@ -1,0 +1,19 @@
+{
+  "equipos": {
+    "Colombia": { "nombre": "Colombia", "bandera": "🇨🇴", "ranking": 8, "ataque": 80, "defensa": 75 },
+    "Portugal": { "nombre": "Portugal", "bandera": "🇵🇹", "ranking": 6, "ataque": 85, "defensa": 80 },
+    "Brasil": { "nombre": "Brasil", "bandera": "🇧🇷", "ranking": 5, "ataque": 90, "defensa": 82 },
+    "Argentina": { "nombre": "Argentina", "bandera": "🇦🇷", "ranking": 1, "ataque": 88, "defensa": 85 },
+    "Francia": { "nombre": "Francia", "bandera": "🇫🇷", "ranking": 2, "ataque": 87, "defensa": 84 },
+    "España": { "nombre": "España", "bandera": "🇪🇸", "ranking": 7, "ataque": 83, "defensa": 78 },
+    "Alemania": { "nombre": "Alemania", "bandera": "🇩🇪", "ranking": 11, "ataque": 82, "defensa": 79 },
+    "Inglaterra": { "nombre": "Inglaterra", "bandera": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "ranking": 4, "ataque": 86, "defensa": 81 }
+  },
+  "partidos": [
+    { "id": 1, "local": "Colombia", "visitante": "Portugal", "grupo": "Grupo A", "fecha": "Mié 15 Jun", "resLocal": null, "resVisitor": null },
+    { "id": 2, "local": "Brasil", "visitante": "Argentina", "grupo": "Grupo B", "fecha": "Jue 16 Jun", "resLocal": null, "resVisitor": null },
+    { "id": 3, "local": "Francia", "visitante": "España", "grupo": "Grupo A", "fecha": "Vie 17 Jun", "resLocal": null, "resVisitor": null },
+    { "id": 4, "local": "Alemania", "visitante": "Inglaterra", "grupo": "Grupo C", "fecha": "Sáb 18 Jun", "resLocal": null, "resVisitor": null }
+  ],
+  "usuariosPredefinidos": ["Carlos", "Ana", "Luis", "María"]
+}

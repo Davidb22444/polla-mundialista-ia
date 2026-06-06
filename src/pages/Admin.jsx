@@ -1,199 +1,298 @@
-import { useState } from 'react';
-import { Users, Trophy, Calendar, BarChart3 } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react'
+import { DB, calculateMatchPoints, buildStandings, showToast } from '../App.jsx'
+import data from '../data/partidos.json'
 
-export default function Admin() {
-  const [activeTab, setActiveTab] = useState('partidos');
+const equipos = data.equipos
+const ADMIN_PASSWORD = 'mundial2026'
 
-  // Datos de ejemplo (después vendrán de una API o archivo JSON)
-  const estadisticas = {
-    totalUsuarios: 24,
-    partidosActivos: 6,
-    prediccionesTotales: 142,
-    precisionOraculo: '78%'
-  };
+// ─── Chart (vanilla Chart.js) ───────────────────────────────────
+function PointsChart({ users, matches }) {
+  const canvasRef = useRef(null)
+  const chartRef = useRef(null)
 
-  const tabs = [
-    { id: 'partidos', label: 'Partidos', icon: Calendar },
-    { id: 'usuarios', label: 'Usuarios', icon: Users },
-    { id: 'estadisticas', label: 'Estadísticas', icon: BarChart3 },
-    { id: 'resultados', label: 'Resultados', icon: Trophy }
-  ];
+  useEffect(() => {
+    const standings = buildStandings(users, matches)
+    const labels = standings.map(s => s.name)
+    const values = standings.map(s => s.totalPoints)
 
-  return (
-    <div style={styles.container}>
-      <h2 style={styles.title}>Panel de Administración</h2>
+    if (chartRef.current) { chartRef.current.destroy(); chartRef.current = null }
 
-      {/* Tarjetas de resumen */}
-      <div style={styles.statsGrid}>
-        <div style={styles.statCard}>
-          <Users size={24} color="#16213e" />
-          <div>
-            <div style={styles.statNumber}>{estadisticas.totalUsuarios}</div>
-            <div style={styles.statLabel}>Usuarios</div>
-          </div>
-        </div>
-        <div style={styles.statCard}>
-          <Calendar size={24} color="#16213e" />
-          <div>
-            <div style={styles.statNumber}>{estadisticas.partidosActivos}</div>
-            <div style={styles.statLabel}>Partidos Activos</div>
-          </div>
-        </div>
-        <div style={styles.statCard}>
-          <Trophy size={24} color="#16213e" />
-          <div>
-            <div style={styles.statNumber}>{estadisticas.prediccionesTotales}</div>
-            <div style={styles.statLabel}>Predicciones</div>
-          </div>
-        </div>
-        <div style={styles.statCard}>
-          <BarChart3 size={24} color="#16213e" />
-          <div>
-            <div style={styles.statNumber}>{estadisticas.precisionOraculo}</div>
-            <div style={styles.statLabel}>Precisión IA</div>
-          </div>
-        </div>
-      </div>
+    const ctx = canvasRef.current?.getContext('2d')
+    if (!ctx) return
 
-      {/* Tabs de navegación */}
-      <div style={styles.tabs}>
-        {tabs.map((tab) => {
-          const Icon = tab.icon;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              style={{
-                ...styles.tab,
-                ...(activeTab === tab.id ? styles.tabActive : {})
-              }}
-            >
-              <Icon size={18} />
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
+    import('chart.js').then(({ Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip }) => {
+      Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip)
+      chartRef.current = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels.length ? labels : ['Sin datos'],
+          datasets: [{
+            label: 'Puntos',
+            data: values.length ? values : [0],
+            backgroundColor: 'rgba(16,185,129,0.6)',
+            borderColor: 'rgba(16,185,129,1)',
+            borderWidth: 1,
+            borderRadius: 6,
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, ticks: { stepSize: 1 } },
+            x: { grid: { display: false } }
+          }
+        }
+      })
+    })
 
-      {/* Contenido según la pestaña activa */}
-      <div style={styles.content}>
-        {activeTab === 'partidos' && (
-          <div>
-            <h3 style={styles.sectionTitle}>Gestión de Partidos</h3>
-            <p style={styles.placeholder}>Aquí podrás agregar, editar y eliminar partidos de la jornada.</p>
-            <button style={styles.addButton}>+ Agregar Nuevo Partido</button>
-          </div>
-        )}
+    return () => { if (chartRef.current) { chartRef.current.destroy(); chartRef.current = null } }
+  }, [users, matches])
 
-        {activeTab === 'usuarios' && (
-          <div>
-            <h3 style={styles.sectionTitle}>Lista de Usuarios</h3>
-            <p style={styles.placeholder}>Aquí verás todos los usuarios registrados y sus pronósticos.</p>
-          </div>
-        )}
-
-        {activeTab === 'estadisticas' && (
-          <div>
-            <h3 style={styles.sectionTitle}>Estadísticas Generales</h3>
-            <p style={styles.placeholder}>Gráficos y métricas de rendimiento del Oráculo IA.</p>
-          </div>
-        )}
-
-        {activeTab === 'resultados' && (
-          <div>
-            <h3 style={styles.sectionTitle}>Resultados Finales</h3>
-            <p style={styles.placeholder}>Tabla de posiciones y ganadores de la polla.</p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
 }
 
-const styles = {
-  container: {
-    padding: '2rem',
-    maxWidth: '1000px',
-    margin: '0 auto'
-  },
-  title: {
-    fontSize: '2rem',
-    color: '#1a1a2e',
-    marginBottom: '2rem'
-  },
-  statsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-    gap: '1rem',
-    marginBottom: '2rem'
-  },
-  statCard: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '1rem',
-    backgroundColor: 'white',
-    padding: '1.5rem',
-    borderRadius: '12px',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-  },
-  statNumber: {
-    fontSize: '1.8rem',
-    fontWeight: 'bold',
-    color: '#16213e'
-  },
-  statLabel: {
-    fontSize: '0.9rem',
-    color: '#666'
-  },
-  tabs: {
-    display: 'flex',
-    gap: '0.5rem',
-    marginBottom: '1.5rem',
-    borderBottom: '2px solid #eee',
-    paddingBottom: '0.5rem'
-  },
-  tab: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    padding: '0.75rem 1.5rem',
-    border: 'none',
-    backgroundColor: 'transparent',
-    color: '#666',
-    fontSize: '1rem',
-    fontWeight: '500',
-    cursor: 'pointer',
-    borderRadius: '8px',
-    transition: 'all 0.3s'
-  },
-  tabActive: {
-    backgroundColor: '#16213e',
-    color: 'white'
-  },
-  content: {
-    backgroundColor: 'white',
-    padding: '2rem',
-    borderRadius: '12px',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-    minHeight: '300px'
-  },
-  sectionTitle: {
-    marginTop: 0,
-    marginBottom: '1rem',
-    color: '#1a1a2e'
-  },
-  placeholder: {
-    color: '#888',
-    marginBottom: '1.5rem'
-  },
-  addButton: {
-    padding: '0.75rem 1.5rem',
-    backgroundColor: '#16213e',
-    color: 'white',
-    border: 'none',
-    borderRadius: '8px',
-    fontSize: '1rem',
-    fontWeight: 'bold',
-    cursor: 'pointer'
+// ─── Match result row ────────────────────────────────────────────
+function MatchRow({ match, users, onPublish }) {
+  const [localVal, setLocalVal] = useState(match.resLocal !== null ? String(match.resLocal) : '')
+  const [visitorVal, setVisitorVal] = useState(match.resVisitor !== null ? String(match.resVisitor) : '')
+
+  const localTeam   = equipos[match.local]    || { nombre: match.local,    bandera: '🏳️' }
+  const visitorTeam = equipos[match.visitante] || { nombre: match.visitante, bandera: '🏳️' }
+  const hasResult   = match.resLocal !== null && match.resVisitor !== null
+
+  const handlePublish = () => {
+    const lv = parseInt(localVal), vv = parseInt(visitorVal)
+    if (isNaN(lv) || isNaN(vv) || lv < 0 || vv < 0) {
+      showToast('Ingresa resultados válidos', '⚠️')
+      return
+    }
+    onPublish(match.id, lv, vv)
   }
-};
+
+  const inputStyle = {
+    width: '100%', padding: '0.75rem 1rem',
+    background: '#fff', border: '1.5px solid var(--slate-200)',
+    borderRadius: '0.75rem', fontSize: '1.1rem', fontWeight: 700,
+    textAlign: 'center', outline: 'none', fontFamily: 'inherit',
+    transition: 'border-color 0.2s, box-shadow 0.2s',
+  }
+
+  return (
+    <div className="glass animate-fade-in-up" style={{ borderRadius: '1rem', padding: '1.5rem', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}>
+      {/* Teams header */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '1.25rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <TeamBadge team={localTeam} />
+          <span style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--slate-300)' }}>VS</span>
+          <TeamBadge team={visitorTeam} />
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--brand-600)', background: 'var(--brand-50)', padding: '0.2rem 0.625rem', borderRadius: '0.5rem', border: '1px solid var(--brand-100)' }}>{match.grupo}</span>
+          <span style={{ fontSize: '0.7rem', color: 'var(--slate-400)' }}>{match.fecha}</span>
+          {hasResult
+            ? <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#fff', background: 'var(--brand-500)', padding: '0.2rem 0.625rem', borderRadius: '0.5rem' }}>FINALIZADO</span>
+            : <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#92400e', background: '#fef3c7', padding: '0.2rem 0.625rem', borderRadius: '0.5rem', border: '1px solid #fde68a' }}>PENDIENTE</span>}
+        </div>
+      </div>
+
+      {/* Result inputs */}
+      <div style={{ display: 'flex', alignItems: 'flex-end', gap: '0.75rem', background: 'var(--slate-50)', padding: '1rem', borderRadius: '0.75rem', border: '1px solid var(--slate-100)', marginBottom: hasResult ? '1.25rem' : 0 }}>
+        <div style={{ flex: 1 }}>
+          <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: 'var(--slate-500)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.5rem' }}>Goles {localTeam.nombre}</label>
+          <input type="number" min="0" max="9" value={localVal} onChange={e => setLocalVal(e.target.value)} style={inputStyle}
+            onFocus={e => { e.target.style.borderColor = 'var(--brand-500)'; e.target.style.boxShadow = '0 0 0 4px rgba(16,185,129,0.1)' }}
+            onBlur={e => { e.target.style.borderColor = 'var(--slate-200)'; e.target.style.boxShadow = 'none' }}
+          />
+        </div>
+        <div style={{ fontSize: '1.25rem', color: 'var(--slate-300)', fontWeight: 300, paddingBottom: '0.75rem' }}>-</div>
+        <div style={{ flex: 1 }}>
+          <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: 'var(--slate-500)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.5rem' }}>Goles {visitorTeam.nombre}</label>
+          <input type="number" min="0" max="9" value={visitorVal} onChange={e => setVisitorVal(e.target.value)} style={inputStyle}
+            onFocus={e => { e.target.style.borderColor = 'var(--brand-500)'; e.target.style.boxShadow = '0 0 0 4px rgba(16,185,129,0.1)' }}
+            onBlur={e => { e.target.style.borderColor = 'var(--slate-200)'; e.target.style.boxShadow = 'none' }}
+          />
+        </div>
+        <button
+          onClick={handlePublish}
+          style={{ padding: '0.75rem 1.25rem', background: 'var(--slate-800)', color: '#fff', border: 'none', borderRadius: '0.75rem', fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 4px 12px rgba(15,23,42,0.2)', transition: 'background 0.2s, transform 0.1s', whiteSpace: 'nowrap' }}
+          onMouseEnter={e => e.currentTarget.style.background = '#0f172a'}
+          onMouseLeave={e => e.currentTarget.style.background = 'var(--slate-800)'}
+          onMouseDown={e => e.currentTarget.style.transform = 'scale(0.97)'}
+          onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
+        >
+          {hasResult ? 'Actualizar' : 'Publicar'}
+        </button>
+      </div>
+
+      {/* Breakdown */}
+      {hasResult && (
+        <div>
+          <h4 style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--slate-500)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+            Desglose de Puntos
+          </h4>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '0.5rem' }}>
+            {users.filter(u => u.bets[match.id]).map(user => {
+              const bet = user.bets[match.id]
+              const pts = calculateMatchPoints(bet.local, bet.visitor, match.resLocal, match.resVisitor)
+              const style = pts === 3
+                ? { bg: 'rgba(16,185,129,0.06)', border: 'var(--brand-200)', text: 'var(--brand-700)' }
+                : pts > 0
+                  ? { bg: 'rgba(245,158,11,0.06)', border: '#fde68a', text: '#92400e' }
+                  : { bg: 'var(--slate-50)', border: 'var(--slate-200)', text: 'var(--slate-500)' }
+              const icon = pts === 3 ? '🎯' : pts > 0 ? '✨' : '—'
+              return (
+                <div key={user.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.625rem 0.875rem', borderRadius: '0.625rem', border: `1px solid ${style.border}`, background: style.bg }}>
+                  <span style={{ fontWeight: 500, fontSize: '0.875rem', color: style.text }}>{user.name}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <span style={{ fontSize: '0.75rem', opacity: 0.7, color: style.text }}>{bet.local}-{bet.visitor}</span>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 700, color: style.text }}>{icon} {pts} pts</span>
+                  </div>
+                </div>
+              )
+            })}
+            {users.filter(u => u.bets[match.id]).length === 0 && (
+              <p style={{ fontSize: '0.75rem', color: 'var(--slate-400)', gridColumn: '1/-1' }}>Aún no hay apuestas para este partido.</p>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function TeamBadge({ team }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', background: 'var(--slate-50)', padding: '0.5rem 0.875rem', borderRadius: '0.625rem', border: '1px solid var(--slate-100)' }}>
+      <span style={{ fontSize: '1.5rem' }}>{team.bandera}</span>
+      <span style={{ fontWeight: 700, fontSize: '0.875rem', color: 'var(--slate-700)' }}>{team.nombre}</span>
+    </div>
+  )
+}
+
+// ─── Admin Page ──────────────────────────────────────────────────
+export default function Admin({ matches, onMatchesChange }) {
+  const [loggedIn, setLoggedIn] = useState(false)
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState(false)
+  const [shaking, setShaking] = useState(false)
+  const users = DB.getUsers()
+
+  const checkPassword = () => {
+    if (password === ADMIN_PASSWORD) {
+      setLoggedIn(true)
+      setPassword('')
+      setError(false)
+    } else {
+      setError(true)
+      setPassword('')
+      setShaking(true)
+      setTimeout(() => setShaking(false), 400)
+    }
+  }
+
+  const handlePublish = (matchId, lv, vv) => {
+    const updated = matches.map(m => m.id === matchId ? { ...m, resLocal: lv, resVisitor: vv } : m)
+    DB.saveMatches(updated)
+    onMatchesChange(updated)
+    showToast('Resultado publicado y puntos asignados', '🏆')
+  }
+
+  const handleReset = () => {
+    if (confirm('¿Borrar TODOS los datos? Esta acción no se puede deshacer.')) {
+      try { localStorage.clear() } catch {}
+      window.location.reload()
+    }
+  }
+
+  const finishedCount = matches.filter(m => m.resLocal !== null).length
+  const totalBets = users.reduce((sum, u) => sum + Object.keys(u.bets).length, 0)
+
+  // ── Login panel ──────────────────────────────────────────────
+  if (!loggedIn) {
+    return (
+      <div style={{ maxWidth: '24rem', margin: '4rem auto', padding: '0 1rem' }}>
+        <div className={`glass ${shaking ? 'animate-shake' : ''}`} style={{ borderRadius: '1.5rem', padding: '2.5rem', boxShadow: '0 16px 48px rgba(0,0,0,0.08)', border: '1px solid rgba(255,255,255,0.6)' }}>
+          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+            <div style={{ width: '3.5rem', height: '3.5rem', background: 'var(--slate-100)', borderRadius: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem', boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.08)' }}>
+              <span style={{ fontSize: '1.75rem' }}>🔒</span>
+            </div>
+            <h2 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.25rem', fontWeight: 800, margin: '0 0 0.25rem' }}>Acceso Restringido</h2>
+            <p style={{ fontSize: '0.875rem', color: 'var(--slate-500)', margin: 0 }}>Panel de administración</p>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <input
+              type="password" value={password}
+              onChange={e => setPassword(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && checkPassword()}
+              placeholder="Contraseña..."
+              style={{ padding: '0.875rem 1rem', background: 'var(--slate-50)', border: '1.5px solid var(--slate-200)', borderRadius: '0.75rem', fontSize: '0.875rem', outline: 'none', fontFamily: 'inherit', transition: 'border-color 0.2s' }}
+              onFocus={e => e.target.style.borderColor = 'var(--brand-500)'}
+              onBlur={e => e.target.style.borderColor = 'var(--slate-200)'}
+            />
+            <button
+              onClick={checkPassword}
+              style={{ padding: '0.875rem', background: 'var(--slate-800)', color: '#fff', border: 'none', borderRadius: '0.75rem', fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 4px 16px rgba(15,23,42,0.2)', transition: 'background 0.2s' }}
+              onMouseEnter={e => e.currentTarget.style.background = '#0f172a'}
+              onMouseLeave={e => e.currentTarget.style.background = 'var(--slate-800)'}
+            >
+              Desbloquear
+            </button>
+            {error && <p style={{ textAlign: 'center', color: '#ef4444', fontSize: '0.75rem', fontWeight: 500, margin: 0 }}>Contraseña incorrecta</p>}
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // ── Admin panel ──────────────────────────────────────────────
+  return (
+    <div style={{ maxWidth: '64rem', margin: '0 auto', padding: '6rem 1rem 3rem' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', marginBottom: '2rem' }}>
+        <div>
+          <h2 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.875rem', fontWeight: 800, margin: 0 }}>
+            Panel de <span style={{ color: 'var(--brand-600)' }}>Control</span>
+          </h2>
+          <p style={{ color: 'var(--slate-500)', fontSize: '0.875rem', marginTop: '0.25rem' }}>Gestiona resultados y monitorea el torneo.</p>
+        </div>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button onClick={handleReset} style={{ padding: '0.5rem 1rem', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 500, color: '#dc2626', cursor: 'pointer', fontFamily: 'inherit', transition: 'background 0.2s' }}>Resetear App</button>
+          <button onClick={() => setLoggedIn(false)} style={{ padding: '0.5rem 1rem', background: '#fff', border: '1px solid var(--slate-200)', borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 500, color: 'var(--slate-600)', cursor: 'pointer', fontFamily: 'inherit', transition: 'background 0.2s' }}>Cerrar sesión</button>
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+        {[
+          { icon: '👥', label: 'Jugadores',   value: users.length,                      color: '#3b82f6' },
+          { icon: '⚽', label: 'Finalizados', value: `${finishedCount}/${matches.length}`, color: 'var(--brand-500)' },
+          { icon: '🎯', label: 'Apuestas',    value: totalBets,                          color: 'var(--gold-500)' },
+        ].map(stat => (
+          <div key={stat.label} className="glass animate-fade-in-up" style={{ borderRadius: '1rem', padding: '1.25rem', boxShadow: '0 4px 16px rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <div style={{ width: '3rem', height: '3rem', borderRadius: '0.75rem', background: `${stat.color}22`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>{stat.icon}</div>
+            <div>
+              <p style={{ fontSize: '0.7rem', fontWeight: 600, color: 'var(--slate-500)', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 0.2rem' }}>{stat.label}</p>
+              <p style={{ fontSize: '1.5rem', fontWeight: 800, margin: 0, color: 'var(--slate-800)' }}>{stat.value}</p>
+            </div>
+          </div>
+        ))}
+        <div className="glass animate-fade-in-up" style={{ borderRadius: '1rem', padding: '1.25rem', boxShadow: '0 4px 16px rgba(0,0,0,0.06)', gridColumn: 'span 1' }}>
+          <p style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--slate-500)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.75rem' }}>Distribución de Puntos</p>
+          <div style={{ height: '8rem' }}>
+            <PointsChart users={users} matches={matches} />
+          </div>
+        </div>
+      </div>
+
+      {/* Match rows */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        {matches.map(match => (
+          <MatchRow key={match.id} match={match} users={users} onPublish={handlePublish} />
+        ))}
+      </div>
+    </div>
+  )
+}

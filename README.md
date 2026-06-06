@@ -1,16 +1,41 @@
-# React + Vite
+# Polla Mundialista 2026 🏆⚽
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicación de predicción de partidos del Mundial 2026 con Oráculo IA.
 
-Currently, two official plugins are available:
+## Características
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- 🤖 **Predictor IA**: El Oráculo calcula automáticamente el marcador esperado basándose en ranking, ataque y defensa de cada equipo.
+- 🎯 **Sistema de puntos**: 3 pts por marcador exacto, 1 pt por acertar resultado parcial.
+- 🏆 **Tabla de posiciones**: Pódium y ranking en tiempo real.
+- ⚙️ **Panel Admin**: Publica resultados y visualiza estadísticas (contraseña: `mundial2026`).
+- 💾 **Persistencia**: Datos guardados en localStorage con fallback en memoria.
 
-## React Compiler
+## Instalación
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+npm install
+npm run dev
+```
 
-## Expanding the ESLint configuration
+## Estructura
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```
+src/
+├── assets/          # Imágenes y recursos estáticos
+├── components/      # Componentes reutilizables
+│   ├── Header.jsx       # Navbar con navegación
+│   ├── OraculoIA.jsx    # Badge del predictor IA
+│   └── PartidoCard.jsx  # Tarjeta de partido
+├── data/
+│   └── partidos.json    # Equipos y partidos iniciales
+└── pages/
+    ├── Inicio.jsx       # Login
+    └── Admin.jsx        # Panel de administración
+```
+
+## Tecnologías
+
+- React 18 + Vite
+- React Router DOM v6
+- Chart.js
+- CSS Custom Properties + Animations
