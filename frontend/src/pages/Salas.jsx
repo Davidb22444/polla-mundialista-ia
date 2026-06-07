@@ -730,21 +730,21 @@ export default function Salas({ currentUser, matches }) {
 
             {/* List of my rooms */}
             <div style={{
-              background: 'rgba(15,23,42,0.4)',
-              border: '1px solid rgba(255,255,255,0.1)',
+              background: '#ffffff',
+              border: '1px solid rgba(15,23,42,0.08)',
               borderRadius: '1.5rem',
               padding: '2rem',
-              backdropFilter: 'blur(12px)',
+              boxShadow: '0 20px 40px rgba(15,23,42,0.08)',
             }}>
-              <h3 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.5rem', fontWeight: 800, margin: '0 0 1.25rem', color: '#fff' }}>
+              <h3 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.5rem', fontWeight: 800, margin: '0 0 1.25rem', color: '#0f172a' }}>
                 Mis Salas ({myRooms.length})
               </h3>
 
               {myRooms.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'rgba(255,255,255,0.6)' }}>
+                <div style={{ textAlign: 'center', padding: '3rem 1rem', color: '#475569' }}>
                   <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1rem' }}>👥</span>
-                  <p style={{ margin: 0, fontWeight: 700, fontSize: '1.1rem' }}>No estás unido a ninguna sala todavía.</p>
-                  <p style={{ margin: '0.35rem 0 0', fontSize: '0.875rem', color: 'rgba(255,255,255,0.45)' }}>
+                  <p style={{ margin: 0, fontWeight: 700, fontSize: '1.1rem', color: '#111827' }}>No estás unido a ninguna sala todavía.</p>
+                  <p style={{ margin: '0.35rem 0 0', fontSize: '0.875rem', color: '#64748b' }}>
                     ¡Crea una sala arriba o únete usando el código de un amigo!
                   </p>
                 </div>

@@ -51,11 +51,10 @@ export default function Eliminatorias() {
           flexWrap: 'wrap',
           justifyContent: 'center',
           gap: '0.5rem',
-          background: 'rgba(255,255,255,0.06)',
+          background: '#ffffff',
           padding: '0.5rem',
           borderRadius: '1.25rem',
-          border: '1px solid rgba(255,255,255,0.1)',
-          backdropFilter: 'blur(8px)',
+          border: '1px solid rgba(15,23,42,0.08)',
           marginBottom: '2rem'
         }}>
           {stages.map(stage => {
@@ -66,7 +65,7 @@ export default function Eliminatorias() {
                 onClick={() => setActiveStage(stage.key)}
                 style={{
                   background: active ? '#0066f5' : 'transparent',
-                  color: '#fff',
+                  color: active ? '#fff' : '#0f172a',
                   border: 0,
                   padding: '0.75rem 1.5rem',
                   borderRadius: '0.95rem',
@@ -85,12 +84,12 @@ export default function Eliminatorias() {
 
         {/* Main Display Area */}
         <div style={{
-          background: 'rgba(255,255,255,0.96)',
+          background: '#ffffff',
           borderRadius: '2rem',
           padding: '3rem 2rem',
           textAlign: 'center',
           boxShadow: '0 30px 60px rgba(0,0,0,0.25)',
-          border: '1px solid rgba(255,255,255,0.9)',
+          border: '1px solid rgba(15,23,42,0.08)',
           minHeight: '20rem',
           display: 'flex',
           flexDirection: 'column',

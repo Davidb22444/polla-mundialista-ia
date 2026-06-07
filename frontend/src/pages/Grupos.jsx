@@ -65,18 +65,18 @@ const starredTeams = new Set(["Curazao", "Cabo Verde", "Uzbekistán", "Jordania"
 
 // Group visual styling configuration to match the reference poster
 const groupConfigs = {
-  "Grupo A": { letter: "A", color: "#E2231A", foldColor: "#0066D4" }, // Red, Blue fold
-  "Grupo B": { letter: "B", color: "#0066D4", foldColor: "#0B7F3C" }, // Blue, Green fold
-  "Grupo C": { letter: "C", color: "#0B7F3C", foldColor: "#EF5A24" }, // Green, Orange fold
-  "Grupo D": { letter: "D", color: "#EF5A24", foldColor: "#7F3FBF" }, // Orange, Purple fold
-  "Grupo E": { letter: "E", color: "#7F3FBF", foldColor: "#D81B60" }, // Purple, Pink fold
-  "Grupo F": { letter: "F", color: "#D81B60", foldColor: "#00A896" }, // Pink, Teal fold
-  "Grupo G": { letter: "G", color: "#00A896", foldColor: "#F39C12" }, // Teal, Yellow fold
-  "Grupo H": { letter: "H", color: "#F39C12", foldColor: "#3F51B5" }, // Yellow, Indigo fold
-  "Grupo I": { letter: "I", color: "#3F51B5", foldColor: "#0B7F3C" }, // Indigo, Green fold
-  "Grupo J": { letter: "J", color: "#009688", foldColor: "#E2231A" }, // Emerald, Red fold
-  "Grupo K": { letter: "K", color: "#E64A19", foldColor: "#5D4037" }, // Red-Orange, Brown fold
-  "Grupo L": { letter: "L", color: "#5D4037", foldColor: "#0066D4" }  // Brown, Blue fold
+  "Grupo A": { letter: "A", color: "#ed1f1a", foldColor: "#0b62c7" },
+  "Grupo B": { letter: "B", color: "#0873d6", foldColor: "#095da8" },
+  "Grupo C": { letter: "C", color: "#0c8a3f", foldColor: "#0a6f34" },
+  "Grupo D": { letter: "D", color: "#f05a24", foldColor: "#7f3fbf" },
+  "Grupo E": { letter: "E", color: "#8442c5", foldColor: "#6f36aa" },
+  "Grupo F": { letter: "F", color: "#d81b60", foldColor: "#b81751" },
+  "Grupo G": { letter: "G", color: "#08a99a", foldColor: "#087f75" },
+  "Grupo H": { letter: "H", color: "#f59e0b", foldColor: "#3f51b5" },
+  "Grupo I": { letter: "I", color: "#4056b8", foldColor: "#31449b" },
+  "Grupo J": { letter: "J", color: "#009688", foldColor: "#00796d" },
+  "Grupo K": { letter: "K", color: "#f0441a", foldColor: "#c53312" },
+  "Grupo L": { letter: "L", color: "#65443a", foldColor: "#0b62c7" }
 }
 
 export function getGroupStandings(groupName, matches, userBets) {
@@ -202,7 +202,7 @@ export default function Grupos({ currentUser, matches, onMatchesChange }) {
       {/* Grid of groups */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
         gap: '1.5rem'
       }}>
         {groupNames.map(groupName => {
@@ -220,10 +220,11 @@ export default function Grupos({ currentUser, matches, onMatchesChange }) {
                 borderRadius: '1.25rem',
                 padding: '1.25rem 1.25rem 1.75rem',
                 cursor: 'pointer',
-                boxShadow: '0 10px 24px rgba(0,0,0,0.08)',
+                boxShadow: `0 14px 30px ${config.color}44, 0 10px 24px rgba(0,0,0,0.18)`,
                 minHeight: '14.5rem',
                 display: 'flex',
-                flexDirection: 'column'
+                flexDirection: 'column',
+                border: '1px solid rgba(255,255,255,0.16)'
               }}
             >
               {/* Header */}
@@ -236,9 +237,11 @@ export default function Grupos({ currentUser, matches, onMatchesChange }) {
                 <h3 style={{
                   fontFamily: 'Syne, sans-serif',
                   fontWeight: 900,
-                  fontSize: '1.35rem',
+                  fontSize: '1.45rem',
                   letterSpacing: '0.04em',
-                  margin: 0
+                  margin: 0,
+                  color: '#fff',
+                  textShadow: '0 2px 8px rgba(0,0,0,0.16)'
                 }}>
                   GRUPO {config.letter}
                 </h3>
@@ -312,10 +315,11 @@ export default function Grupos({ currentUser, matches, onMatchesChange }) {
                         <span style={{
                           fontSize: '0.78rem',
                           fontWeight: 800,
-                          background: 'rgba(255,255,255,0.15)',
+                          background: 'rgba(255,255,255,0.18)',
                           padding: '0.15rem 0.45rem',
                           borderRadius: '0.4rem',
-                          whiteSpace: 'nowrap'
+                          whiteSpace: 'nowrap',
+                          boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.08)'
                         }}>
                           {team.pts} pts ({team.gd >= 0 ? `+${team.gd}` : team.gd})
                         </span>

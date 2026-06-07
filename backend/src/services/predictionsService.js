@@ -2,6 +2,7 @@ import { supabase } from '../config/supabase.js';
 import { httpError } from '../utils/httpError.js';
 
 function calculatePredictionPoints(prediction, match) {
+  // Marcador Exacto (5 Puntos)
   const exactScore =
     prediction.pred_goles_local === match.goles_local &&
     prediction.pred_goles_visitante === match.goles_visitante;
@@ -11,9 +12,19 @@ function calculatePredictionPoints(prediction, match) {
   const predictedResult = Math.sign(prediction.pred_goles_local - prediction.pred_goles_visitante);
   const realResult = Math.sign(match.goles_local - match.goles_visitante);
 
-  if (predictedResult === realResult) return 3;
+  // Error Total (0 Puntos): Resultado incorrecto
+  if (predictedResult !== realResult) return 0;
 
-  return 0;
+  // Resultado correcto (ganador/empate acertado)
+  // Calcular diferencia de goles
+  const predictedGoalDiff = Math.abs(prediction.pred_goles_local - prediction.pred_goles_visitante);
+  const realGoalDiff = Math.abs(match.goles_local - match.goles_visitante);
+
+  // Resultado y Tendencia (3 Puntos): Ganador correcto + diferencia de goles correcta
+  if (predictedGoalDiff === realGoalDiff) return 3;
+
+  // Acierto Simple (1 Punto): Solo ganador/empate correcto
+  return 1;
 }
 
 export async function scorePredictionsForMatch(match) {

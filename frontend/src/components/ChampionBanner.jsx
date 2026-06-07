@@ -2,148 +2,142 @@ import { useState } from 'react'
 import { DB, showToast } from '../App.jsx'
 import data from '../data/partidos.json'
 
-const teams = Object.keys(data.equipos)
-  .filter(t => !t.match(/^[A-Z]\d$/))
-  .sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }))
+const teams = Object.keys(data.equipos).filter(t => !t.match(/^[A-Z]\d+$/))
 
 export default function ChampionBanner({ currentUser }) {
   const [predicted, setPredicted] = useState(() => DB.getPredictedChampion(currentUser))
   const [selected, setSelected] = useState('')
-  const [confirmed, setConfirmed] = useState(false)
 
   if (predicted) {
     return (
       <div style={{
-        background: 'linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))',
-        border: '1px solid rgba(255,255,255,0.06)',
-        borderRadius: '1.25rem',
-        padding: '1rem 1.5rem',
-        marginBottom: '1.5rem',
+        background: 'rgba(248,250,252,0.94)',
+        borderRadius: '1.5rem',
+        padding: '1.25rem 1.75rem',
+        marginBottom: '2rem',
         display: 'flex',
         alignItems: 'center',
-        gap: '1rem',
-        backdropFilter: 'blur(8px)',
+        gap: '1.25rem',
+        boxShadow: '0 12px 34px rgba(15,23,42,0.16)',
         flexWrap: 'wrap',
+        border: '1px solid rgba(226,232,240,0.9)',
       }}>
-        <span style={{ fontSize: '1.8rem' }}>🏆</span>
-        <div>
-          <p style={{ margin: 0, fontWeight: 900, fontSize: '0.9rem', color: 'var(--slate-200)' }}>Tu pronóstico de Campeón</p>
-          <p style={{ margin: '0.1rem 0 0', color: 'var(--slate-50)', fontWeight: 700, fontSize: '1.1rem' }}>{predicted}</p>
+        <div style={{
+          width: '3.5rem', height: '3.5rem', borderRadius: '1rem',
+          background: '#fff7ed', display: 'grid', placeItems: 'center', fontSize: '2rem',
+          border: '1px solid #fed7aa',
+        }}>🏆</div>
+        <div style={{ flex: 1 }}>
+          <p style={{ margin: 0, fontWeight: 900, fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            Tu pronóstico de campeón Mundial 2026
+          </p>
+          <p style={{ margin: '0.2rem 0 0', color: '#0f172a', fontWeight: 900, fontSize: '1.5rem' }}>{predicted}</p>
+        </div>
+        <div style={{
+          background: '#fff',
+          border: '1px solid #e2e8f0',
+          borderRadius: '1rem',
+          padding: '0.6rem 1rem',
+          textAlign: 'center',
+        }}>
+          <p style={{ margin: 0, color: '#64748b', fontSize: '0.75rem', fontWeight: 900 }}>Bonus si aciertas</p>
+          <p style={{ margin: 0, color: '#d97706', fontSize: '1.75rem', fontWeight: 900, lineHeight: 1 }}>+10 pts</p>
         </div>
         <span style={{
-          marginLeft: 'auto',
-          background: '#ffffff',
-          color: 'var(--slate-800)',
+          background: '#f1f5f9',
+          color: '#64748b',
           fontSize: '0.72rem',
-          fontWeight: 700,
-          padding: '0.35rem 0.9rem',
+          fontWeight: 900,
+          padding: '0.4rem 1rem',
           borderRadius: '999px',
-          letterSpacing: '0.04em',
-          textTransform: 'uppercase',
-          display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
-          boxShadow: '0 6px 18px rgba(2,6,23,0.06)'
-        }}>
-          <span style={{ display: 'inline-block', width: '0.54rem', height: '0.54rem', borderRadius: '50%', background: 'rgba(15,23,42,0.08)', border: '1px solid rgba(15,23,42,0.04)' }} />
-          BLOQUEADO · +10 pts
-        </span>
-      </div>
-    )
-  }
-
-  if (confirmed) {
-    return (
-      <div style={{
-        background: 'linear-gradient(135deg, rgba(0,166,81,0.2), rgba(0,166,81,0.08))',
-        border: '1px solid rgba(0,166,81,0.35)',
-        borderRadius: '1.25rem',
-        padding: '1rem 1.5rem',
-        marginBottom: '1.5rem',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '1rem',
-        backdropFilter: 'blur(8px)',
-      }}>
-        <span style={{ fontSize: '1.8rem' }}>✅</span>
-        <p style={{ margin: 0, fontWeight: 700, color: '#fff' }}>¡Campeón guardado! Obtendrás <strong>+10 puntos bonus</strong> si aciertas.</p>
+          letterSpacing: '0.06em',
+          border: '1px solid #e2e8f0',
+        }}>🔒 Bloqueado</span>
       </div>
     )
   }
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, rgba(15,23,42,0.9), rgba(30,41,59,0.85))',
-      border: '1px solid rgba(243,156,18,0.4)',
-      borderRadius: '1.25rem',
-      padding: '1.25rem 1.5rem',
-      marginBottom: '1.5rem',
-      backdropFilter: 'blur(12px)',
-      boxShadow: '0 12px 30px rgba(0,0,0,0.25)',
+      background: 'linear-gradient(135deg, rgba(20,30,60,0.97), rgba(40,20,80,0.95))',
+      border: '2px solid #f59e0b',
+      borderRadius: '1.5rem',
+      padding: '1.75rem',
+      marginBottom: '2rem',
+      boxShadow: '0 0 0 4px rgba(245,158,11,0.12), 0 20px 50px rgba(0,0,0,0.4)',
+      backdropFilter: 'blur(16px)',
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-        <span style={{ fontSize: '1.5rem' }}>🏆</span>
+      {/* Glowing header */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
+        <div style={{
+          width: '3.5rem', height: '3.5rem', borderRadius: '1rem', flexShrink: 0,
+          background: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
+          display: 'grid', placeItems: 'center', fontSize: '2rem',
+          boxShadow: '0 8px 20px rgba(245,158,11,0.5)'
+        }}>🏆</div>
         <div>
-          <p style={{ margin: 0, fontWeight: 900, color: '#fbbf24', fontSize: '0.95rem' }}>¡Pronóstico del Campeón!</p>
-          <p style={{ margin: 0, color: 'rgba(255,255,255,0.7)', fontSize: '0.8rem' }}>Elige el campeón del torneo ahora y obtén un bonus de +10 puntos si aciertas. Esta elección se bloqueará una vez confirmada.</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+            <p style={{ margin: 0, fontWeight: 900, color: '#fbbf24', fontSize: '1.1rem', fontFamily: 'Syne, sans-serif' }}>
+              ¡Pronostica al Campeón del Mundo!
+            </p>
+            <span style={{ background: '#f59e0b', color: '#fff', fontSize: '0.68rem', fontWeight: 900, padding: '0.2rem 0.55rem', borderRadius: '999px' }}>
+              NUEVO
+            </span>
+          </div>
+          <p style={{ margin: 0, color: 'rgba(255,255,255,0.65)', fontSize: '0.85rem' }}>
+            Si aciertas al campeón, obtienes un <strong style={{ color: '#fbbf24' }}>bonus de +10 puntos</strong> extra. Confirma antes de que empiece el torneo.
+          </p>
         </div>
       </div>
-      <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
-        <div style={{ position: 'relative', flex: 1, minWidth: '12rem' }}>
-          <select
-            value={selected}
-            onChange={e => setSelected(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '0.78rem 1rem',
-              paddingRight: '3rem',
-              background: '#fff',
-              border: '1px solid rgba(15,23,42,0.06)',
-              borderRadius: '0.9rem',
-              fontSize: '0.95rem',
-              fontWeight: 700,
-              color: '#0f172a',
-              fontFamily: 'inherit',
-              outline: 'none',
-              cursor: 'pointer',
-              boxShadow: '0 6px 18px rgba(2,6,23,0.06)',
-              WebkitAppearance: 'none',
-              MozAppearance: 'none',
-              appearance: 'none',
-              transition: 'box-shadow 0.18s, transform 0.12s',
-            }}
-            onFocus={e => { e.currentTarget.style.boxShadow = '0 10px 30px rgba(2,6,23,0.10)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-            onBlur={e => { e.currentTarget.style.boxShadow = '0 6px 18px rgba(2,6,23,0.06)'; e.currentTarget.style.transform = 'none'; }}
-          >
-            <option value="" disabled>Selecciona un equipo...</option>
-            {teams.map(t => <option key={t} value={t}>{t}</option>)}
-          </select>
-          <span style={{ position: 'absolute', right: '0.8rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'rgba(15,23,42,0.6)', fontSize: '0.95rem' }}>▾</span>
-        </div>
+
+      <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+        <select
+          value={selected}
+          onChange={e => setSelected(e.target.value)}
+          style={{
+            flex: '1 1 14rem',
+            padding: '0.9rem 1.1rem',
+            background: 'rgba(255,255,255,0.95)',
+            border: '2px solid rgba(245,158,11,0.5)',
+            borderRadius: '0.9rem',
+            fontSize: '1rem',
+            fontWeight: 700,
+            color: '#0f172a',
+            fontFamily: 'inherit',
+            outline: 'none',
+            cursor: 'pointer',
+            boxShadow: '0 4px 14px rgba(0,0,0,0.2)',
+          }}
+        >
+          <option value="">🌍 Selecciona un equipo...</option>
+          {teams.map(t => <option key={t} value={t}>{t}</option>)}
+        </select>
         <button
           disabled={!selected}
           onClick={() => {
             if (!selected) return
             DB.setPredictedChampion(currentUser, selected)
             setPredicted(selected)
-            setConfirmed(true)
-            showToast(`¡${selected} guardado como tu campeón!`, '🏆')
+            showToast(`🏆 ¡${selected} guardado como tu campeón!`, '🏆')
           }}
           style={{
-            background: selected ? '#f59e0b' : '#e5e7eb',
-            color: selected ? '#fff' : '#9ca3af',
+            background: selected
+              ? 'linear-gradient(135deg, #f59e0b, #d97706)'
+              : 'rgba(255,255,255,0.1)',
+            color: selected ? '#fff' : 'rgba(255,255,255,0.4)',
             border: 'none',
-            padding: '0.78rem 1.6rem',
-            borderRadius: '0.95rem',
+            padding: '0.9rem 2rem',
+            borderRadius: '0.9rem',
             fontWeight: 900,
-            fontSize: '0.95rem',
+            fontSize: '1rem',
             cursor: selected ? 'pointer' : 'not-allowed',
             fontFamily: 'inherit',
-            transition: 'transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease',
-            boxShadow: selected ? '0 10px 28px rgba(245,158,11,0.22)' : 'none',
+            transition: 'all 0.2s',
+            boxShadow: selected ? '0 8px 24px rgba(245,158,11,0.45)' : 'none',
+            whiteSpace: 'nowrap',
           }}
-          onMouseEnter={e => { if (selected) { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 18px 40px rgba(245,158,11,0.26)'; e.currentTarget.style.background = '#f59e0b' } }}
-          onMouseLeave={e => { if (selected) { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 10px 28px rgba(245,158,11,0.22)'; e.currentTarget.style.background = '#f59e0b' } }}
         >
-          Confirmar Campeón
+          Confirmar Campeón →
         </button>
       </div>
     </div>

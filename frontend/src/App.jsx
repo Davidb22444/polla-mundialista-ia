@@ -103,14 +103,24 @@ export function calcularMarcador(localName, visitorName) {
 // ─── Points ────────────────────────────────────────────────────
 export function calculateMatchPoints(bL, bV, rL, rV) {
   if (rL === null || rV === null) return 0
-  if (bL === rL && bV === rV) return 3
-  let pts = 0
+  // Marcador Exacto (5 Puntos)
+  if (bL === rL && bV === rV) return 5
+  
   const bRes = bL > bV ? 'W' : bL < bV ? 'L' : 'D'
   const rRes = rL > rV ? 'W' : rL < rV ? 'L' : 'D'
-  if (bRes === rRes) pts++
-  if (bL === rL) pts++
-  if (bV === rV) pts++
-  return Math.min(3, pts)
+  
+  // Error Total (0 Puntos): Resultado incorrecto
+  if (bRes !== rRes) return 0
+  
+  // Resultado correcto (ganador/empate acertado)
+  const bGoalDiff = Math.abs(bL - bV)
+  const rGoalDiff = Math.abs(rL - rV)
+  
+  // Resultado y Tendencia (3 Puntos): Ganador correcto + diferencia de goles correcta
+  if (bGoalDiff === rGoalDiff) return 3
+  
+  // Acierto Simple (1 Punto): Solo ganador/empate correcto
+  return 1
 }
 
 // ─── Toast ─────────────────────────────────────────────────────
@@ -201,7 +211,7 @@ const ACHIEVEMENTS = [
 export function buildStandings(users, matches) {
   const tournamentChampion = DB.getTournamentChampion()
   return users.map(user => {
-    let totalPoints = 0, betsMade = 0, exactScores = 0
+    let totalPoints = 0, betsMade = 0, exactScores = 0, trendencyScores = 0
     let currentStreak = 0, maxStreak = 0, tempStreak = 0
     const playedMatches = matches.filter(m => m.resLocal !== null && m.resVisitor !== null)
     playedMatches.forEach(match => {
@@ -210,7 +220,8 @@ export function buildStandings(users, matches) {
       betsMade++
       const pts = calculateMatchPoints(bet.local, bet.visitor, match.resLocal, match.resVisitor)
       totalPoints += pts
-      if (pts === 3) exactScores++
+      if (pts === 5) exactScores++
+      if (pts === 3) trendencyScores++
       if (pts > 0) {
         tempStreak++
         if (tempStreak > maxStreak) maxStreak = tempStreak
@@ -225,8 +236,13 @@ export function buildStandings(users, matches) {
     totalPoints += champBonus
     const stats = { betsMade, exactScores, totalPoints, currentStreak, maxStreak, predictedChamp, champBonus }
     const achievements = ACHIEVEMENTS.filter(a => a.check(stats))
-    return { name: user.name, betsMade, exactScores, totalPoints, currentStreak, maxStreak, predictedChamp, champBonus, achievements }
-  }).sort((a, b) => b.totalPoints - a.totalPoints || b.exactScores - a.exactScores || a.name.localeCompare(b.name))
+    return { name: user.name, betsMade, exactScores, trendencyScores, totalPoints, currentStreak, maxStreak, predictedChamp, champBonus, achievements }
+  }).sort((a, b) => 
+    b.totalPoints - a.totalPoints || 
+    b.exactScores - a.exactScores || 
+    b.trendencyScores - a.trendencyScores || 
+    a.name.localeCompare(b.name)
+  )
 }
 
 // ─── Tabla de Posiciones ────────────────────────────────────────
@@ -563,57 +579,19 @@ function Partidos({ currentUser, matches, onMatchesChange }) {
         )}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1.5rem' }}>
-        {filteredMatches.map(match => {
-          const stat = globalStats[match.id] || { local: 0, draw: 0, visitor: 0, topScore: null }
-          const total = stat.local + stat.draw + stat.visitor
-          return (
-            <div key={match.id} style={{ display: 'flex', flexDirection: 'column' }}>
-              <PartidoCard
-                match={match}
-                userBet={userData.bets[match.id]}
-                onBet={handleBet}
-                onClear={handleClear}
-              />
-              {/* Community stats bar */}
-              {total > 0 && (
-                <div style={{
-                  background: 'rgba(15,23,42,0.85)',
-                  backdropFilter: 'blur(8px)',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  borderTop: 0,
-                  borderRadius: '0 0 1rem 1rem',
-                  padding: '0.65rem 1rem',
-                }}>
-                  <p style={{ margin: '0 0 0.4rem', fontSize: '0.68rem', fontWeight: 900, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-                    Comunidad · {total} {total === 1 ? 'apuesta' : 'apuestas'}{stat.topScore ? ` · Más popular: ${stat.topScore}` : ''}
-                  </p>
-                  <div style={{ display: 'flex', borderRadius: '999px', overflow: 'hidden', height: '6px', gap: '1px' }}>
-                    <div style={{ flex: stat.local, background: '#00a651', minWidth: stat.local > 0 ? '4px' : 0 }} />
-                    <div style={{ flex: stat.draw, background: '#f59e0b', minWidth: stat.draw > 0 ? '4px' : 0 }} />
-                    <div style={{ flex: stat.visitor, background: '#e11a27', minWidth: stat.visitor > 0 ? '4px' : 0 }} />
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.3rem', fontSize: '0.65rem', fontWeight: 800 }}>
-                    <span style={{ color: '#4ade80' }}>Local {total > 0 ? Math.round(stat.local / total * 100) : 0}%</span>
-                    <span style={{ color: '#fbbf24' }}>Empate {total > 0 ? Math.round(stat.draw / total * 100) : 0}%</span>
-                    <span style={{ color: '#f87171' }}>Visita {total > 0 ? Math.round(stat.visitor / total * 100) : 0}%</span>
-                  </div>
-                </div>
-              )}
-              {/* Chat */}
-              <div style={{
-                background: 'rgba(15,23,42,0.85)',
-                backdropFilter: 'blur(8px)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderTop: 0,
-                borderRadius: total > 0 ? '0 0 1rem 1rem' : '0 0 1rem 1rem',
-                padding: '0 1rem 0.5rem',
-              }}>
-                <PartidoChat matchId={match.id} currentUser={currentUser} />
-              </div>
-            </div>
-          )
-        })}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '0.75rem' }}>
+        {filteredMatches.map((match, i) => (
+          <PartidoCard
+            key={match.id}
+            index={i}
+            match={match}
+            userBet={userData.bets[match.id]}
+            onBet={handleBet}
+            onClear={handleClear}
+            currentUser={currentUser}
+            matchStats={globalStats[match.id]}
+          />
+        ))}
         {filteredMatches.length === 0 && (
           <div style={{ gridColumn: '1 / -1', padding: '2rem', borderRadius: '1.25rem', background: 'rgba(248,250,252,0.9)', textAlign: 'center', color: 'var(--slate-500)' }}>
             No hay partidos programados para esta fecha o grupo.
@@ -647,6 +625,45 @@ export default function App() {
       title: 'Haz tus pronósticos',
       description: 'En la sección de Partidos elige los goles de cada equipo antes del comienzo de los encuentros.',
       target: 'Menú Partidos',
+    },
+    {
+      title: 'Sistema de Puntuación',
+      description: (
+        <div style={{ lineHeight: 1.8 }}>
+          <p style={{ margin: '0 0 0.5rem', fontWeight: 700, color: '#059669' }}>💚 5 Puntos: Marcador Exacto</p>
+          <p style={{ margin: '0 0 0.75rem', fontSize: '0.92rem', color: '#475569' }}>Adivinaste el resultado exacto. Ej: dijiste 2-1 y fue 2-1.</p>
+          
+          <p style={{ margin: '0.5rem 0 0.5rem', fontWeight: 700, color: '#0066f5' }}>🔵 3 Puntos: Resultado y Tendencia</p>
+          <p style={{ margin: '0 0 0.75rem', fontSize: '0.92rem', color: '#475569' }}>Ganador correcto + diferencia de goles. Ej: dijiste 1-0 y quedó 2-1.</p>
+          
+          <p style={{ margin: '0.5rem 0 0.5rem', fontWeight: 700, color: '#f97316' }}>🟠 1 Punto: Acierto Simple</p>
+          <p style={{ margin: '0 0 0.75rem', fontSize: '0.92rem', color: '#475569' }}>Solo adivinaste al ganador/empate. Ej: dijiste 3-0 y quedó 1-0.</p>
+          
+          <p style={{ margin: '0.5rem 0 0.5rem', fontWeight: 700, color: '#ef4444' }}>❌ 0 Puntos: Error Total</p>
+          <p style={{ margin: 0, fontSize: '0.92rem', color: '#475569' }}>No acertaste al ganador. Ej: dijiste Equipo A y ganó Equipo B.</p>
+        </div>
+      ),
+      target: 'Tabla de Puntos',
+    },
+    {
+      title: 'Criterios de Desempate',
+      description: (
+        <div style={{ lineHeight: 1.8 }}>
+          <p style={{ margin: '0 0 0.75rem', fontSize: '0.92rem', color: '#64748b' }}>
+            Si al final dos amigos terminan con los mismos puntos, se evita dividir premios o armar debates usando este orden estricto:
+          </p>
+          
+          <p style={{ margin: '0.5rem 0 0.5rem', fontWeight: 700, color: '#059669' }}>🥇 1º: Mayor cantidad de marcadores exactos</p>
+          <p style={{ margin: '0 0 0.75rem', fontSize: '0.92rem', color: '#475569' }}>Los de 5 puntos. Quien arriesgó y acertó más resultados clavados merece ganar.</p>
+          
+          <p style={{ margin: '0.5rem 0 0.5rem', fontWeight: 700, color: '#0066f5' }}>🥈 2º: Mayor cantidad de resultados de tendencia</p>
+          <p style={{ margin: '0 0 0.75rem', fontSize: '0.92rem', color: '#475569' }}>Los de 3 puntos. Si persiste la igualdad, gana quien tuvo más aciertos de tendencia.</p>
+          
+          <p style={{ margin: '0.5rem 0 0.5rem', fontWeight: 700, color: '#f97316' }}>🥉 3º: Sorteo o moneda al aire</p>
+          <p style={{ margin: 0, fontSize: '0.92rem', color: '#475569' }}>Si la igualdad persiste en todo lo anterior, lo cual es rarísimo, que decida la suerte.</p>
+        </div>
+      ),
+      target: 'Tabla de Posiciones',
     },
     {
       title: 'Revisa tu posición',
@@ -811,11 +828,15 @@ export default function App() {
               <p style={{ margin: '0.75rem 0 0', color: 'rgba(255,255,255,0.78)', lineHeight: 1.6, fontSize: '0.95rem' }}>Esta app te ayuda a pronosticar partidos, competir con tu grupo y seguir tu posición en el torneo.</p>
             </div>
             <div style={{ padding: '2rem', background: '#f8fafc' }}>
-              <div style={{ display: 'grid', gap: '1.5rem', minHeight: '11.5rem' }}>
+              <div style={{ display: 'grid', gap: '1.5rem', minHeight: '18rem' }}>
                 <div key={guideStep} style={{ display: 'grid', gap: '1.25rem', animation: 'stepTransition 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}>
                   <div>
                     <h3 style={{ margin: '0 0 0.5rem', fontSize: '1.2rem', fontWeight: 800, color: '#0f172a' }}>{guideSteps[guideStep].title}</h3>
-                    <p style={{ margin: 0, color: '#475569', lineHeight: 1.75, fontSize: '0.98rem' }}>{guideSteps[guideStep].description}</p>
+                    {typeof guideSteps[guideStep].description === 'string' ? (
+                      <p style={{ margin: 0, color: '#475569', lineHeight: 1.75, fontSize: '0.98rem' }}>{guideSteps[guideStep].description}</p>
+                    ) : (
+                      guideSteps[guideStep].description
+                    )}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', padding: '1rem 1.25rem', borderRadius: '1rem', background: '#f1f5f9', border: '1px solid #e2e8f0' }}>
                     <span style={{ width: '2.5rem', height: '2.5rem', borderRadius: '50%', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', color: '#fff', display: 'grid', placeItems: 'center', fontSize: '1.1rem', boxShadow: '0 4px 12px rgba(15,23,42,0.15)' }}>🔎</span>
@@ -829,7 +850,7 @@ export default function App() {
                 {/* Progress Indicator Dots */}
                 <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', margin: '0.5rem 0' }}>
                   {guideSteps.map((_, idx) => {
-                    const stepColors = ['#00a651', '#0066f5', '#e11a27', '#00a651'];
+                    const stepColors = ['#00a651', '#0066f5', '#059669', '#e11a27', '#f97316', '#00a651'];
                     const isActive = idx === guideStep;
                     return (
                       <div

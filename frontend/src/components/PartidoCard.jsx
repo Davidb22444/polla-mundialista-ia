@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import TeamFlag from './TeamFlag.jsx'
 import data from '../data/partidos.json'
 import { calcularMarcador, calculateMatchPoints } from '../App.jsx'
 import OraculoIA from './OraculoIA.jsx'
+import PartidoChat from './PartidoChat.jsx'
 
 const equipos = data.equipos
 
@@ -13,6 +15,49 @@ const colors = {
   ink: '#102a43',
 }
 
+// ─── Animation variants ─────────────────────────────────────────
+const cardVariants = {
+  hidden: { opacity: 0, y: 28, scale: 0.97 },
+  visible: (i = 0) => ({
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      type: 'spring',
+      stiffness: 260,
+      damping: 24,
+      delay: i * 0.05,
+    },
+  }),
+}
+
+const sectionVariants = {
+  hidden: { opacity: 0, y: 12, scale: 0.98 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { type: 'spring', stiffness: 320, damping: 26 },
+  },
+  exit: {
+    opacity: 0,
+    y: -8,
+    scale: 0.97,
+    transition: { duration: 0.16, ease: 'easeIn' },
+  },
+}
+
+const badgeVariants = {
+  hidden: { opacity: 0, scale: 0.7, x: 8 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    x: 0,
+    transition: { type: 'spring', stiffness: 400, damping: 20, delay: 0.12 },
+  },
+}
+
+// ─── Helpers ────────────────────────────────────────────────────
 function calculateBetReturns(amount) {
   const safeAmount = Number.isFinite(amount) ? Math.max(0, amount) : 0
   return {
@@ -33,15 +78,16 @@ function formatMoney(value) {
   return `$${Number(value || 0).toLocaleString('es-CO')}`
 }
 
-export default function PartidoCard({ match, userBet, onBet, onClear }) {
-  const [localVal, setLocalVal] = useState('')
+// ─── Main Card ──────────────────────────────────────────────────
+export default function PartidoCard({ match, userBet, onBet, onClear, index = 0, currentUser, matchStats }) {
+  const [localVal, setLocalVal]   = useState('')
   const [visitorVal, setVisitorVal] = useState('')
   const [betAmount, setBetAmount] = useState('')
 
-  const localTeam = equipos[match.local] || { nombre: match.local, bandera: '' }
-  const visitorTeam = equipos[match.visitante] || { nombre: match.visitante, bandera: '' }
-  const prediction = calcularMarcador(match.local, match.visitante)
-  const hasResult = match.resLocal !== null && match.resVisitor !== null
+  const localTeam   = equipos[match.local]     || { nombre: match.local,    bandera: '' }
+  const visitorTeam = equipos[match.visitante]  || { nombre: match.visitante, bandera: '' }
+  const prediction  = calcularMarcador(match.local, match.visitante)
+  const hasResult   = match.resLocal !== null && match.resVisitor !== null
   const amountValue = parseInt(betAmount, 10)
   const previewReturns = calculateBetReturns(Number.isNaN(amountValue) ? 0 : amountValue)
 
@@ -62,19 +108,11 @@ export default function PartidoCard({ match, userBet, onBet, onClear }) {
     setBetAmount('')
   }
 
-  const buttonBase = {
-    border: '1px solid transparent',
-    borderRadius: '0.9rem',
-    cursor: 'pointer',
-    fontFamily: 'inherit',
-    transition: 'transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, color 0.18s ease, border-color 0.18s ease',
-  }
-
   const inputStyle = {
-    width: '4.25rem',
-    height: '3.65rem',
+    width: '3.1rem',
+    height: '3rem',
     textAlign: 'center',
-    fontSize: '1.55rem',
+    fontSize: '1.25rem',
     fontWeight: 900,
     background: '#fff',
     border: '1.5px solid rgba(45,120,163,0.18)',
@@ -87,12 +125,21 @@ export default function PartidoCard({ match, userBet, onBet, onClear }) {
   }
 
   return (
-    <div
-      className="partido-card animate-fade-in-up"
+    <motion.div
+      custom={index}
+      variants={cardVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: '-32px' }}
+      whileHover={{
+        y: -5,
+        scale: 1.01,
+        boxShadow: '0 28px 56px rgba(18,48,68,0.16)',
+        transition: { type: 'spring', stiffness: 300, damping: 22 },
+      }}
       style={{
         borderRadius: 'var(--card-radius)',
-        padding: '1rem',
-        minHeight: '100%',
+        padding: '0.5rem',
         display: 'flex',
         flexDirection: 'column',
         position: 'relative',
@@ -104,138 +151,162 @@ export default function PartidoCard({ match, userBet, onBet, onClear }) {
         backdropFilter: 'blur(18px)',
       }}
     >
-
-      <OraculoIA golesLocal={prediction.golesLocal} golesVisitante={prediction.golesVisitante} />
+      {/* Oracle badge */}
+      <motion.div variants={badgeVariants} initial="hidden" animate="visible">
+        <OraculoIA golesLocal={prediction.golesLocal} golesVisitante={prediction.golesVisitante} />
+      </motion.div>
 
       <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', flex: 1 }}>
         <CardHeader match={match} hasResult={hasResult} />
 
-        <div
+        {/* Match stage */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: 'spring', stiffness: 280, damping: 24, delay: 0.07 }}
           className="match-stage"
           style={{
-            marginTop: '1rem',
-            padding: '1.3rem 1rem',
+            marginTop: '0.65rem',
+            padding: '0.8rem 0.75rem',
             borderRadius: 'var(--card-radius)',
             background: 'rgba(255,255,255,0.96)',
             border: '1px solid rgba(45,120,163,0.08)',
             boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.24)',
           }}
         >
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) auto minmax(0,1fr)', alignItems: 'center', gap: '0.75rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) auto minmax(0,1fr)', alignItems: 'center', gap: '0.55rem' }}>
             <TeamBlock team={localTeam} align="left" />
-            <div
+            <motion.div
+              animate={{ rotate: [0, -3, 3, -1.5, 1.5, 0] }}
+              transition={{ duration: 2, delay: 0.7, ease: 'easeInOut' }}
               style={{
-                width: '3.25rem',
-                height: '3.25rem',
+                width: '2.9rem',
+                height: '2.9rem',
                 borderRadius: '1rem',
                 display: 'grid',
                 placeItems: 'center',
                 background: colors.ink,
                 color: '#fff',
-                fontSize: '0.78rem',
+                fontSize: '0.68rem',
                 fontWeight: 900,
                 boxShadow: '0 14px 26px rgba(45,120,163,0.22)',
               }}
             >
               VS
-            </div>
+            </motion.div>
             <TeamBlock team={visitorTeam} align="right" />
           </div>
-        </div>
+        </motion.div>
 
-        {hasResult ? (
-          <FinishedSection pointsEarned={pointsEarned} userBet={userBet} match={match} />
-        ) : userBet ? (
-          <ConfirmedSection userBet={userBet} matchId={match.id} onClear={onClear} buttonBase={buttonBase} />
-        ) : (
-          <BetForm
-            localTeam={localTeam}
-            visitorTeam={visitorTeam}
-            localVal={localVal}
-            visitorVal={visitorVal}
-            betAmount={betAmount}
-            setLocalVal={setLocalVal}
-            setVisitorVal={setVisitorVal}
-            setBetAmount={setBetAmount}
-            inputStyle={inputStyle}
-            buttonBase={buttonBase}
-            previewReturns={previewReturns}
-            onSubmit={handleBet}
-          />
-        )}
+        {/* Animated section transitions */}
+        <AnimatePresence mode="wait">
+          {hasResult ? (
+            <motion.div key="finished" variants={sectionVariants} initial="hidden" animate="visible" exit="exit">
+              <FinishedSection pointsEarned={pointsEarned} userBet={userBet} match={match} />
+            </motion.div>
+          ) : userBet ? (
+            <motion.div key="confirmed" variants={sectionVariants} initial="hidden" animate="visible" exit="exit">
+              <ConfirmedSection userBet={userBet} matchId={match.id} onClear={onClear} />
+            </motion.div>
+          ) : (
+            <motion.div key="form" variants={sectionVariants} initial="hidden" animate="visible" exit="exit">
+              <BetForm
+                localTeam={localTeam}
+                visitorTeam={visitorTeam}
+                localVal={localVal}
+                visitorVal={visitorVal}
+                betAmount={betAmount}
+                setLocalVal={setLocalVal}
+                setVisitorVal={setVisitorVal}
+                setBetAmount={setBetAmount}
+                inputStyle={inputStyle}
+                previewReturns={previewReturns}
+                onSubmit={handleBet}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {matchStats && (matchStats.local + matchStats.draw + matchStats.visitor) > 0 && (() => {
+        const total = matchStats.local + matchStats.draw + matchStats.visitor;
+        return (
+          <div style={{
+            margin: '1rem -0.5rem -0.5rem',
+            background: '#f8fafc',
+            borderTop: '1px solid rgba(18,48,68,0.08)',
+            padding: '0.65rem 1rem',
+          }}>
+            <p style={{ margin: '0 0 0.4rem', fontSize: '0.68rem', fontWeight: 900, color: 'rgba(18,48,68,0.6)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              Comunidad · {total} {total === 1 ? 'apuesta' : 'apuestas'}{matchStats.topScore ? ` · Más popular: ${matchStats.topScore}` : ''}
+            </p>
+            <div style={{ display: 'flex', borderRadius: '999px', overflow: 'hidden', height: '6px', gap: '1px' }}>
+              <div style={{ flex: matchStats.local, background: '#00a651', minWidth: matchStats.local > 0 ? '4px' : 0 }} />
+              <div style={{ flex: matchStats.draw, background: '#f59e0b', minWidth: matchStats.draw > 0 ? '4px' : 0 }} />
+              <div style={{ flex: matchStats.visitor, background: '#e11a27', minWidth: matchStats.visitor > 0 ? '4px' : 0 }} />
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.3rem', fontSize: '0.65rem', fontWeight: 800 }}>
+              <span style={{ color: '#00a651' }}>Local {total > 0 ? Math.round(matchStats.local / total * 100) : 0}%</span>
+              <span style={{ color: '#d97706' }}>Empate {total > 0 ? Math.round(matchStats.draw / total * 100) : 0}%</span>
+              <span style={{ color: '#e11a27' }}>Visita {total > 0 ? Math.round(matchStats.visitor / total * 100) : 0}%</span>
+            </div>
+          </div>
+        )
+      })()}
+      
+      <div style={{
+        margin: (matchStats && (matchStats.local + matchStats.draw + matchStats.visitor) > 0) ? '0 -0.5rem -0.5rem' : '1rem -0.5rem -0.5rem',
+        background: '#f8fafc',
+        borderTop: (matchStats && (matchStats.local + matchStats.draw + matchStats.visitor) > 0) ? 'none' : '1px solid rgba(18,48,68,0.08)',
+        padding: '0',
+        borderRadius: '0 0 var(--card-radius) var(--card-radius)',
+        overflow: 'hidden'
+      }}>
+        <PartidoChat matchId={match.id} currentUser={currentUser} />
       </div>
 
       <style>{`
-        .partido-card {
-          transition: transform 0.25s ease, box-shadow 0.25s ease;
-        }
-
-        .partido-card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 28px 64px rgba(18,48,68,0.16) !important;
-        }
-
         @media (max-width: 420px) {
-          .partido-card {
-            padding: 0.8rem !important;
-            border-radius: 1.05rem !important;
-          }
-
-          .match-stage {
-            padding-left: 0.55rem !important;
-            padding-right: 0.55rem !important;
-          }
-
-          .team-flag {
-            width: 3.15rem !important;
-            height: 3.15rem !important;
-            font-size: 2rem !important;
-          }
-
-          .bet-score-row {
-            gap: 0.6rem !important;
-          }
+          .match-stage { padding-left: 0.55rem !important; padding-right: 0.55rem !important; }
+          .team-flag   { width: 3.15rem !important; height: 3.15rem !important; font-size: 2rem !important; }
+          .bet-score-row { gap: 0.6rem !important; }
         }
-
         .bet-info-tooltip {
-          opacity: 0;
-          visibility: hidden;
-          transform: translateY(6px);
+          opacity: 0; visibility: hidden; transform: translateY(6px);
           transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
         }
-
         .bet-info-wrap:hover .bet-info-tooltip,
         .bet-info-wrap:focus-within .bet-info-tooltip {
-          opacity: 1;
-          visibility: visible;
-          transform: translateY(0);
+          opacity: 1; visibility: visible; transform: translateY(0);
         }
       `}</style>
-    </div>
+    </motion.div>
   )
 }
 
+// ─── CardHeader ─────────────────────────────────────────────────
 function CardHeader({ match, hasResult }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.75rem', padding: '0.15rem 0.15rem 0' }}>
+    <motion.div
+      initial={{ opacity: 0, y: -6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.28, delay: 0.04 }}
+      style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.75rem', padding: '0.15rem 0.15rem 0' }}
+    >
       <div style={{ minWidth: 0 }}>
-        <span
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.4rem',
-            padding: '0.38rem 0.65rem',
-            borderRadius: '999px',
-            background: 'rgba(45,120,163,0.1)',
-            border: '1px solid rgba(45,120,163,0.14)',
-            color: colors.blue,
-            fontSize: '0.72rem',
-            fontWeight: 900,
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-          }}
-        >
-          <span style={{ width: '0.46rem', height: '0.46rem', borderRadius: '50%', background: colors.green }} />
+        <span style={{
+          display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
+          padding: '0.38rem 0.65rem', borderRadius: '999px',
+          background: 'rgba(45,120,163,0.1)', border: '1px solid rgba(45,120,163,0.14)',
+          color: colors.blue, fontSize: '0.72rem', fontWeight: 900,
+          textTransform: 'uppercase', letterSpacing: '0.05em',
+        }}>
+          {/* Pulse dot */}
+          <motion.span
+            animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
+            transition={{ duration: 2, repeat: Infinity, repeatDelay: 0.5 }}
+            style={{ width: '0.46rem', height: '0.46rem', borderRadius: '50%', background: colors.green, display: 'inline-block' }}
+          />
           {match.grupo}
         </span>
         <div style={{ marginTop: '0.65rem', display: 'flex', alignItems: 'center', gap: '0.42rem', color: 'rgba(18,48,68,0.58)', fontSize: '0.78rem', fontWeight: 800 }}>
@@ -246,47 +317,49 @@ function CardHeader({ match, hasResult }) {
         </div>
       </div>
 
-      <span
+      <motion.span
+        initial={{ opacity: 0, scale: 0.75 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ type: 'spring', stiffness: 420, damping: 18, delay: 0.1 }}
         style={{
-          flex: '0 0 auto',
-          padding: '0.38rem 0.62rem',
-          borderRadius: '999px',
+          flex: '0 0 auto', padding: '0.38rem 0.62rem', borderRadius: '999px',
           background: hasResult ? colors.green : 'rgba(225, 26, 39, 0.08)',
           color: hasResult ? '#fff' : colors.coral,
           border: hasResult ? '1px solid transparent' : '1px solid rgba(225, 26, 39, 0.16)',
-          fontSize: '0.68rem',
-          fontWeight: 900,
-          textTransform: 'uppercase',
-          letterSpacing: '0.05em',
+          fontSize: '0.68rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em',
         }}
       >
         {hasResult ? 'Finalizado' : 'Abierto'}
-      </span>
-    </div>
+      </motion.span>
+    </motion.div>
   )
 }
 
+// ─── TeamBlock ──────────────────────────────────────────────────
 function TeamBlock({ team, align }) {
   const isRight = align === 'right'
-
   return (
     <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: isRight ? 'flex-end' : 'flex-start', gap: '0.7rem' }}>
-      <div
-        className="team-flag animate-float"
+      <motion.div
+        initial={{ opacity: 0, x: isRight ? 16 : -16 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ type: 'spring', stiffness: 340, damping: 22, delay: 0.1 }}
+        whileHover={{ scale: 1.08, rotate: isRight ? 3 : -3 }}
+        className="team-flag"
         style={{
-          width: '4.1rem',
-          height: '4.1rem',
+          width: '3rem',
+          height: '3rem',
           borderRadius: 'var(--card-radius)',
           display: 'grid',
           placeItems: 'center',
           background: '#fff',
           border: '1px solid rgba(45,120,163,0.12)',
           boxShadow: '0 14px 30px rgba(18,48,68,0.1)',
-          animationDelay: isRight ? '1s' : '0s',
+          cursor: 'default',
         }}
       >
         <TeamFlag code={team.code} name={team.nombre} style={{ width: '100%', height: '100%', borderRadius: '0.8rem' }} />
-      </div>
+      </motion.div>
       <div style={{ minWidth: 0, maxWidth: '100%', textAlign: isRight ? 'right' : 'left' }}>
         <p style={{ margin: 0, color: colors.ink, fontSize: '0.98rem', fontWeight: 900, lineHeight: 1.18, overflowWrap: 'anywhere' }}>
           {team.nombre}
@@ -296,57 +369,64 @@ function TeamBlock({ team, align }) {
   )
 }
 
-function BetForm({ localTeam, visitorTeam, localVal, visitorVal, betAmount, setLocalVal, setVisitorVal, setBetAmount, inputStyle, buttonBase, previewReturns, onSubmit }) {
+// ─── BetForm ────────────────────────────────────────────────────
+function BetForm({ localTeam, visitorTeam, localVal, visitorVal, betAmount, setLocalVal, setVisitorVal, setBetAmount, inputStyle, previewReturns, onSubmit }) {
+  const buttonBase = {
+    border: '1px solid transparent',
+    borderRadius: '0.9rem',
+    cursor: 'pointer',
+    fontFamily: 'inherit',
+  }
+
   return (
-    <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(45,120,163,0.12)' }}>
-      <p style={{ margin: '0 0 0.85rem', color: 'rgba(18,48,68,0.62)', fontSize: '0.78rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+    <div style={{ marginTop: '0.6rem', paddingTop: '0.6rem', borderTop: '1px solid rgba(45,120,163,0.12)' }}>
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.08 }}
+        style={{ margin: '0 0 0.65rem', color: 'rgba(18,48,68,0.62)', fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.06em' }}
+      >
         Tu pronostico
-      </p>
-      <div className="bet-score-row" style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: '1rem', marginBottom: '1rem' }}>
+      </motion.p>
+
+      <div className="bet-score-row" style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.65rem' }}>
         <ScoreInput team={localTeam} value={localVal} onChange={setLocalVal} inputStyle={inputStyle} />
-        <span style={{ color: colors.coral, fontSize: '1.6rem', fontWeight: 900, paddingBottom: '0.72rem' }}>-</span>
+        <motion.span
+          animate={{ scale: [1, 1.2, 1] }}
+          transition={{ duration: 1.6, repeat: Infinity, repeatDelay: 0.6 }}
+          style={{ color: colors.coral, fontSize: '1.6rem', fontWeight: 900, paddingBottom: '0.72rem' }}
+        >
+          -
+        </motion.span>
         <ScoreInput team={visitorTeam} value={visitorVal} onChange={setVisitorVal} inputStyle={inputStyle} />
       </div>
 
-      <div
+      <motion.div
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.12 }}
         style={{
-          marginBottom: '0.9rem',
-          padding: '1rem',
-          borderRadius: '1.5rem',
-          background: 'rgba(245,249,252,0.95)',
-          border: '1px solid rgba(45,120,163,0.08)',
+          marginBottom: '0.65rem', padding: '0.75rem', borderRadius: '1.2rem',
+          background: 'rgba(245,249,252,0.95)', border: '1px solid rgba(45,120,163,0.08)',
           backdropFilter: 'blur(10px)',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.7rem' }}>
-          <label htmlFor={`amount-${localTeam.nombre}-${visitorTeam.nombre}`} style={{ color: colors.ink, fontSize: '0.78rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.6rem', marginBottom: '0.55rem' }}>
+          <label style={{ color: colors.ink, fontSize: '0.78rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
             Monto
           </label>
           <HoverInfo returns={previewReturns} />
         </div>
-
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) auto', alignItems: 'center', gap: '0.65rem' }}>
           <input
-            id={`amount-${localTeam.nombre}-${visitorTeam.nombre}`}
-            type="number"
-            min="1"
-            step="1000"
-            value={betAmount}
-            onChange={e => setBetAmount(e.target.value)}
+            type="number" min="1" step="1000"
+            value={betAmount} onChange={e => setBetAmount(e.target.value)}
             placeholder="Ej: 10000"
             style={{
-              width: '100%',
-              minWidth: 0,
-              height: '3rem',
-              padding: '0 0.95rem',
-              background: '#fff',
-              border: '1.5px solid rgba(45,120,163,0.18)',
-              borderRadius: '0.9rem',
-              outline: 'none',
-              color: colors.ink,
-              fontFamily: 'inherit',
-              fontSize: '0.95rem',
-              fontWeight: 900,
+              width: '100%', minWidth: 0, height: '2.5rem', padding: '0 0.75rem',
+              background: '#fff', border: '1.5px solid rgba(45,120,163,0.18)',
+              borderRadius: '0.85rem', outline: 'none', color: colors.ink,
+              fontFamily: 'inherit', fontSize: '0.9rem', fontWeight: 900,
               boxShadow: '0 10px 24px rgba(18,48,68,0.06)',
               transition: 'border-color 0.2s, box-shadow 0.2s',
             }}
@@ -360,102 +440,76 @@ function BetForm({ localTeam, visitorTeam, localVal, visitorVal, betAmount, setL
             }}
           />
           <div style={{ minWidth: '6.8rem', textAlign: 'right' }}>
-            <p style={{ margin: 0, color: 'rgba(18,48,68,0.48)', fontSize: '0.66rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              Max gana
-            </p>
-            <p style={{ margin: '0.1rem 0 0', color: colors.blue, fontSize: '0.95rem', fontWeight: 900 }}>
+            <p style={{ margin: 0, color: 'rgba(18,48,68,0.48)', fontSize: '0.66rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Max gana</p>
+            <motion.p
+              key={previewReturns.exact}
+              initial={{ scale: 0.82, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: 'spring', stiffness: 420, damping: 18 }}
+              style={{ margin: '0.1rem 0 0', color: colors.blue, fontSize: '0.95rem', fontWeight: 900 }}
+            >
               {formatMoney(previewReturns.exact)}
-            </p>
+            </motion.p>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      <button
+      <motion.button
         onClick={onSubmit}
+        whileHover={{ scale: 1.02, y: -2, boxShadow: '0 20px 36px rgba(0,166,81,0.28)' }}
+        whileTap={{ scale: 0.97 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 18 }}
         style={{
           ...buttonBase,
-          width: '100%',
-          minHeight: '3.25rem',
-          padding: '0.9rem 1rem',
-          background: colors.green,
-          color: '#fff',
-          fontWeight: 900,
-          fontSize: '0.9rem',
-          letterSpacing: '0.04em',
+          width: '100%', minHeight: '2.6rem', padding: '0.65rem 0.85rem',
+          background: colors.green, color: '#fff',
+          fontWeight: 900, fontSize: '0.85rem', letterSpacing: '0.04em',
           boxShadow: '0 16px 30px rgba(0,166,81,0.22)',
         }}
-        onMouseEnter={e => {
-          e.currentTarget.style.transform = 'translateY(-2px)'
-          e.currentTarget.style.boxShadow = '0 20px 36px rgba(0,166,81,0.24)'
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.transform = 'translateY(0)'
-          e.currentTarget.style.boxShadow = '0 16px 30px rgba(0,166,81,0.22)'
-        }}
-        onMouseDown={e => { e.currentTarget.style.transform = 'scale(0.98)' }}
-        onMouseUp={e => { e.currentTarget.style.transform = 'translateY(-2px) scale(1)' }}
       >
         Guardar pronostico
-      </button>
+      </motion.button>
     </div>
   )
 }
 
+// ─── HoverInfo ──────────────────────────────────────────────────
 function HoverInfo({ returns }) {
   return (
     <div className="bet-info-wrap" style={{ position: 'relative', display: 'inline-flex' }}>
-      <button
+      <motion.button
         type="button"
+        whileHover={{ scale: 1.12 }}
+        whileTap={{ scale: 0.94 }}
         aria-label="Ver descripcion de ganancias"
         style={{
-          width: '1.85rem',
-          height: '1.85rem',
-          borderRadius: '0.65rem',
-          border: '1px solid rgba(45,120,163,0.16)',
-          background: '#fff',
-          color: colors.blue,
-          display: 'grid',
-          placeItems: 'center',
-          cursor: 'help',
-          fontFamily: 'inherit',
-          fontWeight: 900,
+          width: '1.85rem', height: '1.85rem', borderRadius: '0.65rem',
+          border: '1px solid rgba(45,120,163,0.16)', background: '#fff',
+          color: colors.blue, display: 'grid', placeItems: 'center',
+          cursor: 'help', fontFamily: 'inherit', fontWeight: 900,
           boxShadow: '0 8px 18px rgba(18,48,68,0.08)',
         }}
-      >
-        ?
-      </button>
+      >?</motion.button>
       <div
         className="bet-info-tooltip"
         style={{
-          position: 'absolute',
-          right: 0,
-          top: '2.25rem',
-          width: '16rem',
-          zIndex: 8,
-          padding: '0.85rem',
-          borderRadius: '1rem',
-          background: 'rgba(18,48,68,0.96)',
-          color: '#fff',
+          position: 'absolute', right: 0, top: '2.25rem', width: '16rem', zIndex: 8,
+          padding: '0.85rem', borderRadius: '1rem',
+          background: 'rgba(18,48,68,0.96)', color: '#fff',
           boxShadow: '0 18px 36px rgba(18,48,68,0.22)',
-          border: '1px solid rgba(255,255,255,0.12)',
-          pointerEvents: 'none',
+          border: '1px solid rgba(255,255,255,0.12)', pointerEvents: 'none',
         }}
       >
         <p style={{ margin: '0 0 0.55rem', fontSize: '0.78rem', fontWeight: 900 }}>Ganancia estimada</p>
-        <p style={{ margin: '0 0 0.35rem', color: 'rgba(255,255,255,0.78)', fontSize: '0.72rem', lineHeight: 1.45 }}>
-          Marcador exacto: ganas {formatMoney(returns.exact)}.
-        </p>
-        <p style={{ margin: '0 0 0.35rem', color: 'rgba(255,255,255,0.78)', fontSize: '0.72rem', lineHeight: 1.45 }}>
-          Resultado parcial: ganas {formatMoney(returns.partial)}.
-        </p>
-        <p style={{ margin: 0, color: 'rgba(255,255,255,0.58)', fontSize: '0.7rem', lineHeight: 1.45 }}>
-          Si fallas el resultado, no hay ganancia.
-        </p>
+        <p style={{ margin: '0 0 0.35rem', color: 'rgba(255,255,255,0.78)', fontSize: '0.72rem', lineHeight: 1.45 }}>Marcador exacto: ganas {formatMoney(returns.exact)}.</p>
+        <p style={{ margin: '0 0 0.35rem', color: 'rgba(255,255,255,0.78)', fontSize: '0.72rem', lineHeight: 1.45 }}>Resultado parcial: ganas {formatMoney(returns.partial)}.</p>
+        <p style={{ margin: 0, color: 'rgba(255,255,255,0.58)', fontSize: '0.7rem', lineHeight: 1.45 }}>Si fallas el resultado, no hay ganancia.</p>
       </div>
     </div>
   )
 }
 
+// ─── ScoreInput ─────────────────────────────────────────────────
 function ScoreInput({ team, value, onChange, inputStyle }) {
   return (
     <label style={{ minWidth: 0, display: 'grid', justifyItems: 'center', gap: '0.48rem' }}>
@@ -463,11 +517,8 @@ function ScoreInput({ team, value, onChange, inputStyle }) {
         {team.nombre}
       </span>
       <input
-        type="number"
-        min="0"
-        max="9"
-        value={value}
-        onChange={e => onChange(e.target.value)}
+        type="number" min="0" max="9"
+        value={value} onChange={e => onChange(e.target.value)}
         placeholder="0"
         style={inputStyle}
         onFocus={e => {
@@ -485,41 +536,38 @@ function ScoreInput({ team, value, onChange, inputStyle }) {
   )
 }
 
-function ConfirmedSection({ userBet, matchId, onClear, buttonBase }) {
+// ─── ConfirmedSection ───────────────────────────────────────────
+function ConfirmedSection({ userBet, matchId, onClear }) {
   const amount = userBet.amount || 0
   const potentialWin = userBet.potentialWin || calculateBetReturns(amount).exact
 
   return (
     <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(45,120,163,0.12)' }}>
-      <div
+      <motion.div
+        initial={{ opacity: 0, scale: 0.94 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ type: 'spring', stiffness: 320, damping: 22 }}
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '0.85rem',
-          padding: '0.85rem',
-          borderRadius: '1rem',
-          background: 'rgba(0, 166, 81, 0.08)',
-          border: '1px solid rgba(0, 166, 81, 0.16)',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.85rem',
+          padding: '0.85rem', borderRadius: '1rem',
+          background: 'rgba(0, 166, 81, 0.08)', border: '1px solid rgba(0, 166, 81, 0.16)',
         }}
       >
         <div style={{ minWidth: 0, display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-          <span
+          <motion.span
+            initial={{ scale: 0, rotate: -90 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: 'spring', stiffness: 500, damping: 18, delay: 0.08 }}
             style={{
-              width: '2rem',
-              height: '2rem',
-              flex: '0 0 auto',
-              borderRadius: '0.75rem',
-              background: colors.green,
-              display: 'grid',
-              placeItems: 'center',
-              color: colors.ink,
+              width: '2rem', height: '2rem', flex: '0 0 auto',
+              borderRadius: '0.75rem', background: colors.green,
+              display: 'grid', placeItems: 'center', color: colors.ink,
             }}
           >
             <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
             </svg>
-          </span>
+          </motion.span>
           <div style={{ minWidth: 0 }}>
             <p style={{ margin: 0, color: colors.ink, fontSize: '0.86rem', fontWeight: 900 }}>Apuesta confirmada</p>
             <p style={{ margin: '0.15rem 0 0', color: 'rgba(18,48,68,0.56)', fontSize: '0.72rem', fontWeight: 800 }}>
@@ -527,72 +575,75 @@ function ConfirmedSection({ userBet, matchId, onClear, buttonBase }) {
             </p>
           </div>
         </div>
-        <span style={{ flex: '0 0 auto', color: colors.blue, fontSize: '1.18rem', fontWeight: 900 }}>
+        <motion.span
+          initial={{ opacity: 0, x: 8 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.12 }}
+          style={{ flex: '0 0 auto', color: colors.blue, fontSize: '1.18rem', fontWeight: 900 }}
+        >
           {userBet.local} - {userBet.visitor}
-        </span>
-      </div>
+        </motion.span>
+      </motion.div>
 
-      <button
+      <motion.button
         onClick={() => onClear(matchId)}
+        whileHover={{ scale: 1.02, y: -1, background: 'rgba(249,97,69,0.08)' }}
+        whileTap={{ scale: 0.97 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 18 }}
         style={{
-          ...buttonBase,
-          width: '100%',
-          marginTop: '0.75rem',
-          minHeight: '2.65rem',
-          background: '#fff',
-          borderColor: 'rgba(249,97,69,0.16)',
-          color: colors.coral,
-          fontSize: '0.8rem',
-          fontWeight: 900,
-        }}
-        onMouseEnter={e => {
-          e.currentTarget.style.background = 'rgba(249,97,69,0.1)'
-          e.currentTarget.style.transform = 'translateY(-1px)'
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.background = '#fff'
-          e.currentTarget.style.transform = 'translateY(0)'
+          width: '100%', marginTop: '0.75rem', minHeight: '2.65rem',
+          background: '#fff', border: '1px solid rgba(249,97,69,0.16)',
+          color: colors.coral, fontSize: '0.8rem', fontWeight: 900,
+          borderRadius: '0.9rem', cursor: 'pointer', fontFamily: 'inherit',
         }}
       >
         Modificar pronostico
-      </button>
+      </motion.button>
     </div>
   )
 }
 
+// ─── FinishedSection ────────────────────────────────────────────
 function FinishedSection({ pointsEarned, userBet, match }) {
   const amount = userBet?.amount || 0
   const actualReturn = calculateActualReturn(amount, pointsEarned)
-  const exact = pointsEarned === 3
+  const exact   = pointsEarned === 3
   const partial = pointsEarned > 0 && pointsEarned < 3
   const state = exact
-    ? { bg: 'rgba(0, 102, 245, 0.08)', border: 'rgba(0, 102, 245, 0.16)', color: colors.blue, label: 'Marcador exacto' }
+    ? { bg: 'rgba(0, 102, 245, 0.08)', border: 'rgba(0, 102, 245, 0.16)', color: colors.blue,  label: 'Marcador exacto', emoji: '🎯' }
     : partial
-      ? { bg: 'rgba(225, 26, 39, 0.08)', border: 'rgba(225, 26, 39, 0.16)', color: colors.coral, label: `${pointsEarned} punto${pointsEarned > 1 ? 's' : ''}` }
-      : { bg: 'rgba(18,48,68,0.05)', border: 'rgba(18,48,68,0.1)', color: 'rgba(18,48,68,0.58)', label: 'Sin puntos' }
+      ? { bg: 'rgba(225, 26, 39, 0.08)', border: 'rgba(225, 26, 39, 0.16)', color: colors.coral, label: `${pointsEarned} punto${pointsEarned > 1 ? 's' : ''}`, emoji: '✨' }
+      : { bg: 'rgba(18,48,68,0.05)',      border: 'rgba(18,48,68,0.1)',       color: 'rgba(18,48,68,0.58)', label: 'Sin puntos', emoji: '—' }
 
   return (
     <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(45,120,163,0.12)' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
+      <motion.div
+        initial={{ opacity: 0, y: 5 }}
+        animate={{ opacity: 1, y: 0 }}
+        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}
+      >
         <span style={{ color: 'rgba(18,48,68,0.58)', fontSize: '0.76rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
           Resultado final
         </span>
-        <span style={{ color: colors.ink, fontSize: '1rem', fontWeight: 900 }}>
+        <motion.span
+          initial={{ scale: 0.65, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', stiffness: 500, damping: 18, delay: 0.08 }}
+          style={{ color: colors.ink, fontSize: '1rem', fontWeight: 900 }}
+        >
           {match.resLocal} - {match.resVisitor}
-        </span>
-      </div>
+        </motion.span>
+      </motion.div>
 
       {userBet ? (
-        <div
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 22, delay: 0.06 }}
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '0.85rem',
-            padding: '0.9rem',
-            borderRadius: '1rem',
-            background: state.bg,
-            border: `1px solid ${state.border}`,
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.85rem',
+            padding: '0.9rem', borderRadius: '1rem',
+            background: state.bg, border: `1px solid ${state.border}`,
           }}
         >
           <div style={{ minWidth: 0 }}>
@@ -604,14 +655,28 @@ function FinishedSection({ pointsEarned, userBet, match }) {
               Monto {formatMoney(amount)} | gana {formatMoney(actualReturn)}
             </p>
           </div>
-          <span style={{ flex: '0 0 auto', width: '2.25rem', height: '2.25rem', borderRadius: '0.8rem', display: 'grid', placeItems: 'center', background: '#fff', color: state.color, fontWeight: 900, boxShadow: '0 10px 22px rgba(18,48,68,0.08)' }}>
-            {pointsEarned}
-          </span>
-        </div>
+          <motion.span
+            initial={{ scale: 0, rotate: 180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: 'spring', stiffness: 420, damping: 16, delay: 0.14 }}
+            style={{
+              flex: '0 0 auto', width: '2.25rem', height: '2.25rem', borderRadius: '0.8rem',
+              display: 'grid', placeItems: 'center', background: '#fff',
+              color: state.color, fontWeight: 900, boxShadow: '0 10px 22px rgba(18,48,68,0.08)',
+              fontSize: exact ? '1.1rem' : '0.95rem',
+            }}
+          >
+            {exact ? state.emoji : pointsEarned}
+          </motion.span>
+        </motion.div>
       ) : (
-        <div style={{ padding: '0.9rem', borderRadius: '1rem', background: 'rgba(18,48,68,0.04)', border: '1px solid rgba(18,48,68,0.08)', textAlign: 'center', color: 'rgba(18,48,68,0.56)', fontSize: '0.84rem', fontWeight: 800 }}>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          style={{ padding: '0.9rem', borderRadius: '1rem', background: 'rgba(18,48,68,0.04)', border: '1px solid rgba(18,48,68,0.08)', textAlign: 'center', color: 'rgba(18,48,68,0.56)', fontSize: '0.84rem', fontWeight: 800 }}
+        >
           No realizaste apuesta
-        </div>
+        </motion.div>
       )}
     </div>
   )
