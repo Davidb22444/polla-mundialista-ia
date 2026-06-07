@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
 import { DB, calculateMatchPoints, buildStandings, showToast } from '../App.jsx'
 import data from '../data/partidos.json'
+import TeamFlag from '../components/TeamFlag.jsx'
+import fondoAdmin from '../assets/fondo_admin.png'
+import fondoAdminGlobal from '../assets/fondo_admin_global.webp'
 
 const equipos = data.equipos
-const ADMIN_PASSWORD = 'mundial2026'
 
 // ─── Chart (vanilla Chart.js) ───────────────────────────────────
 function PointsChart({ users, matches }) {
@@ -116,9 +118,9 @@ function MatchRow({ match, users, onPublish }) {
         </div>
         <button
           onClick={handlePublish}
-          style={{ padding: '0.75rem 1.25rem', background: 'var(--slate-800)', color: '#fff', border: 'none', borderRadius: '0.75rem', fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 4px 12px rgba(15,23,42,0.2)', transition: 'background 0.2s, transform 0.1s', whiteSpace: 'nowrap' }}
-          onMouseEnter={e => e.currentTarget.style.background = '#0f172a'}
-          onMouseLeave={e => e.currentTarget.style.background = 'var(--slate-800)'}
+          style={{ padding: '0.75rem 1.25rem', background: '#0066f5', color: '#fff', border: 'none', borderRadius: '0.75rem', fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 4px 12px rgba(15,23,42,0.2)', transition: 'background 0.2s, transform 0.1s', whiteSpace: 'nowrap' }}
+          onMouseEnter={e => e.currentTarget.style.background = '#0052c7'}
+          onMouseLeave={e => e.currentTarget.style.background = '#0066f5'}
           onMouseDown={e => e.currentTarget.style.transform = 'scale(0.97)'}
           onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
         >
@@ -166,7 +168,7 @@ function MatchRow({ match, users, onPublish }) {
 function TeamBadge({ team }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', background: 'var(--slate-50)', padding: '0.5rem 0.875rem', borderRadius: '0.625rem', border: '1px solid var(--slate-100)' }}>
-      <span style={{ fontSize: '1.5rem' }}>{team.bandera}</span>
+      <TeamFlag code={team.code} name={team.nombre} style={{ width: '1.5rem', height: '1.5rem', borderRadius: '50%', flexShrink: 0 }} />
       <span style={{ fontWeight: 700, fontSize: '0.875rem', color: 'var(--slate-700)' }}>{team.nombre}</span>
     </div>
   )
@@ -174,24 +176,7 @@ function TeamBadge({ team }) {
 
 // ─── Admin Page ──────────────────────────────────────────────────
 export default function Admin({ matches, onMatchesChange }) {
-  const [loggedIn, setLoggedIn] = useState(false)
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState(false)
-  const [shaking, setShaking] = useState(false)
   const users = DB.getUsers()
-
-  const checkPassword = () => {
-    if (password === ADMIN_PASSWORD) {
-      setLoggedIn(true)
-      setPassword('')
-      setError(false)
-    } else {
-      setError(true)
-      setPassword('')
-      setShaking(true)
-      setTimeout(() => setShaking(false), 400)
-    }
-  }
 
   const handlePublish = (matchId, lv, vv) => {
     const updated = matches.map(m => m.id === matchId ? { ...m, resLocal: lv, resVisitor: vv } : m)
@@ -210,57 +195,59 @@ export default function Admin({ matches, onMatchesChange }) {
   const finishedCount = matches.filter(m => m.resLocal !== null).length
   const totalBets = users.reduce((sum, u) => sum + Object.keys(u.bets).length, 0)
 
-  // ── Login panel ──────────────────────────────────────────────
-  if (!loggedIn) {
-    return (
-      <div style={{ maxWidth: '24rem', margin: '4rem auto', padding: '0 1rem' }}>
-        <div className={`glass ${shaking ? 'animate-shake' : ''}`} style={{ borderRadius: '1.5rem', padding: '2.5rem', boxShadow: '0 16px 48px rgba(0,0,0,0.08)', border: '1px solid rgba(255,255,255,0.6)' }}>
-          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-            <div style={{ width: '3.5rem', height: '3.5rem', background: 'var(--slate-100)', borderRadius: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem', boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.08)' }}>
-              <span style={{ fontSize: '1.75rem' }}>🔒</span>
-            </div>
-            <h2 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.25rem', fontWeight: 800, margin: '0 0 0.25rem' }}>Acceso Restringido</h2>
-            <p style={{ fontSize: '0.875rem', color: 'var(--slate-500)', margin: 0 }}>Panel de administración</p>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <input
-              type="password" value={password}
-              onChange={e => setPassword(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && checkPassword()}
-              placeholder="Contraseña..."
-              style={{ padding: '0.875rem 1rem', background: 'var(--slate-50)', border: '1.5px solid var(--slate-200)', borderRadius: '0.75rem', fontSize: '0.875rem', outline: 'none', fontFamily: 'inherit', transition: 'border-color 0.2s' }}
-              onFocus={e => e.target.style.borderColor = 'var(--brand-500)'}
-              onBlur={e => e.target.style.borderColor = 'var(--slate-200)'}
-            />
-            <button
-              onClick={checkPassword}
-              style={{ padding: '0.875rem', background: 'var(--slate-800)', color: '#fff', border: 'none', borderRadius: '0.75rem', fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 4px 16px rgba(15,23,42,0.2)', transition: 'background 0.2s' }}
-              onMouseEnter={e => e.currentTarget.style.background = '#0f172a'}
-              onMouseLeave={e => e.currentTarget.style.background = 'var(--slate-800)'}
-            >
-              Desbloquear
-            </button>
-            {error && <p style={{ textAlign: 'center', color: '#ef4444', fontSize: '0.75rem', fontWeight: 500, margin: 0 }}>Contraseña incorrecta</p>}
-          </div>
-        </div>
-      </div>
-    )
-  }
-
   // ── Admin panel ──────────────────────────────────────────────
   return (
-    <div style={{ maxWidth: '64rem', margin: '0 auto', padding: '6rem 1rem 3rem' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', marginBottom: '2rem' }}>
-        <div>
-          <h2 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.875rem', fontWeight: 800, margin: 0 }}>
-            Panel de <span style={{ color: 'var(--brand-600)' }}>Control</span>
-          </h2>
-          <p style={{ color: 'var(--slate-500)', fontSize: '0.875rem', marginTop: '0.25rem' }}>Gestiona resultados y monitorea el torneo.</p>
-        </div>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button onClick={handleReset} style={{ padding: '0.5rem 1rem', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 500, color: '#dc2626', cursor: 'pointer', fontFamily: 'inherit', transition: 'background 0.2s' }}>Resetear App</button>
-          <button onClick={() => setLoggedIn(false)} style={{ padding: '0.5rem 1rem', background: '#fff', border: '1px solid var(--slate-200)', borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 500, color: 'var(--slate-600)', cursor: 'pointer', fontFamily: 'inherit', transition: 'background 0.2s' }}>Cerrar sesión</button>
+    <div style={{
+      position: 'relative',
+      minHeight: '100vh',
+      backgroundImage: `url(${fondoAdminGlobal})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundAttachment: 'fixed'
+    }}>
+      {/* Overlay para mantener la legibilidad de las tarjetas blancas */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        backgroundColor: 'rgba(15, 23, 42, 0.45)',
+        backdropFilter: 'blur(2px)'
+      }}></div>
+      
+      <div style={{ position: 'relative', zIndex: 1, maxWidth: '64rem', margin: '0 auto', padding: '6rem 1rem 3rem' }}>
+      {/* Header Banner */}
+      <div style={{
+        position: 'relative',
+        borderRadius: '1.25rem',
+        overflow: 'hidden',
+        marginBottom: '2rem',
+        boxShadow: '0 12px 30px rgba(0,0,0,0.15)',
+        backgroundImage: `url(${fondoAdmin})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center center',
+        minHeight: '26rem',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-end'
+      }}>
+        {/* Overlay */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(180deg, rgba(15,23,42,0) 0%, rgba(15,23,42,0.2) 40%, rgba(15,23,42,0.95) 100%)',
+          zIndex: 1
+        }}></div>
+        
+        <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: '1rem', padding: '2rem', width: '100%', boxSizing: 'border-box' }}>
+          <div>
+            <h2 style={{ fontFamily: 'Syne, sans-serif', fontSize: '2.5rem', fontWeight: 800, margin: 0, color: '#fff', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
+              Panel de <span style={{ color: '#00a651' }}>Control</span>
+            </h2>
+            <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '1rem', marginTop: '0.35rem', fontWeight: 500, textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>Gestiona resultados y monitorea el torneo.</p>
+          </div>
+          <div style={{ display: 'flex', gap: '0.75rem' }}>
+            <button onClick={handleReset} style={{ padding: '0.6rem 1.1rem', background: 'rgba(220,38,38,0.9)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700, color: '#fff', cursor: 'pointer', fontFamily: 'inherit', transition: 'transform 0.2s', backdropFilter: 'blur(4px)' }} onMouseEnter={e => e.currentTarget.style.transform='scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform='scale(1)'}>Resetear App</button>
+            <button onClick={() => { localStorage.removeItem('polla-current-user'); window.location.reload(); }} style={{ padding: '0.6rem 1.1rem', background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700, color: '#fff', cursor: 'pointer', fontFamily: 'inherit', backdropFilter: 'blur(8px)', transition: 'transform 0.2s' }} onMouseEnter={e => e.currentTarget.style.transform='scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform='scale(1)'}>Cerrar sesión</button>
+          </div>
         </div>
       </div>
 
@@ -293,6 +280,7 @@ export default function Admin({ matches, onMatchesChange }) {
           <MatchRow key={match.id} match={match} users={users} onPublish={handlePublish} />
         ))}
       </div>
+    </div>
     </div>
   )
 }

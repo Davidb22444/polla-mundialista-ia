@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import TeamFlag from './TeamFlag.jsx'
 import data from '../data/partidos.json'
 import { calcularMarcador, calculateMatchPoints } from '../App.jsx'
 import OraculoIA from './OraculoIA.jsx'
@@ -6,10 +7,10 @@ import OraculoIA from './OraculoIA.jsx'
 const equipos = data.equipos
 
 const colors = {
-  green: '#88da88',
-  coral: '#f96145',
-  blue: '#2d78a3',
-  ink: '#123044',
+  green: '#00a651',
+  coral: '#e11a27',
+  blue: '#0066f5',
+  ink: '#102a43',
 }
 
 function calculateBetReturns(amount) {
@@ -89,40 +90,20 @@ export default function PartidoCard({ match, userBet, onBet, onClear }) {
     <div
       className="partido-card animate-fade-in-up"
       style={{
-        borderRadius: '1.25rem',
+        borderRadius: 'var(--card-radius)',
         padding: '1rem',
         minHeight: '100%',
         display: 'flex',
         flexDirection: 'column',
         position: 'relative',
         overflow: 'hidden',
-        background: 'rgba(255,255,255,0.86)',
-        border: '1px solid rgba(255,255,255,0.9)',
-        boxShadow: '0 22px 54px rgba(18,48,68,0.12)',
-        backdropFilter: 'blur(16px)',
+        background: '#ffffff',
+        border: '1px solid rgba(45,120,163,0.08)',
+        borderBottom: 0,
+        boxShadow: '0 16px 40px rgba(18,48,68,0.08)',
+        backdropFilter: 'blur(18px)',
       }}
     >
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background:
-            `linear-gradient(135deg, rgba(136,218,136,0.18), transparent 35%), linear-gradient(315deg, rgba(249,97,69,0.13), transparent 38%), linear-gradient(180deg, rgba(45,120,163,0.08), transparent 60%)`,
-          pointerEvents: 'none',
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          right: '-4.5rem',
-          top: '-4.5rem',
-          width: '12rem',
-          height: '12rem',
-          borderRadius: '50%',
-          background: `radial-gradient(circle, rgba(136,218,136,0.42), rgba(136,218,136,0) 70%)`,
-          pointerEvents: 'none',
-        }}
-      />
 
       <OraculoIA golesLocal={prediction.golesLocal} golesVisitante={prediction.golesVisitante} />
 
@@ -133,10 +114,11 @@ export default function PartidoCard({ match, userBet, onBet, onClear }) {
           className="match-stage"
           style={{
             marginTop: '1rem',
-            padding: '1.15rem 0.75rem',
-            borderRadius: '1.15rem',
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.82), rgba(255,255,255,0.52))',
-            border: '1px solid rgba(45,120,163,0.1)',
+            padding: '1.3rem 1rem',
+            borderRadius: 'var(--card-radius)',
+            background: 'rgba(255,255,255,0.96)',
+            border: '1px solid rgba(45,120,163,0.08)',
+            boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.24)',
           }}
         >
           <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) auto minmax(0,1fr)', alignItems: 'center', gap: '0.75rem' }}>
@@ -148,7 +130,7 @@ export default function PartidoCard({ match, userBet, onBet, onClear }) {
                 borderRadius: '1rem',
                 display: 'grid',
                 placeItems: 'center',
-                background: `linear-gradient(135deg, ${colors.blue}, ${colors.coral})`,
+                background: colors.ink,
                 color: '#fff',
                 fontSize: '0.78rem',
                 fontWeight: 900,
@@ -269,9 +251,9 @@ function CardHeader({ match, hasResult }) {
           flex: '0 0 auto',
           padding: '0.38rem 0.62rem',
           borderRadius: '999px',
-          background: hasResult ? `linear-gradient(135deg, ${colors.blue}, ${colors.green})` : 'rgba(249,97,69,0.1)',
+          background: hasResult ? colors.green : 'rgba(225, 26, 39, 0.08)',
           color: hasResult ? '#fff' : colors.coral,
-          border: hasResult ? '1px solid rgba(255,255,255,0.24)' : '1px solid rgba(249,97,69,0.16)',
+          border: hasResult ? '1px solid transparent' : '1px solid rgba(225, 26, 39, 0.16)',
           fontSize: '0.68rem',
           fontWeight: 900,
           textTransform: 'uppercase',
@@ -294,17 +276,16 @@ function TeamBlock({ team, align }) {
         style={{
           width: '4.1rem',
           height: '4.1rem',
-          borderRadius: '1.2rem',
+          borderRadius: 'var(--card-radius)',
           display: 'grid',
           placeItems: 'center',
           background: '#fff',
           border: '1px solid rgba(45,120,163,0.12)',
           boxShadow: '0 14px 30px rgba(18,48,68,0.1)',
-          fontSize: '2.55rem',
           animationDelay: isRight ? '1s' : '0s',
         }}
       >
-        {team.bandera}
+        <TeamFlag code={team.code} name={team.nombre} style={{ width: '100%', height: '100%', borderRadius: '0.8rem' }} />
       </div>
       <div style={{ minWidth: 0, maxWidth: '100%', textAlign: isRight ? 'right' : 'left' }}>
         <p style={{ margin: 0, color: colors.ink, fontSize: '0.98rem', fontWeight: 900, lineHeight: 1.18, overflowWrap: 'anywhere' }}>
@@ -330,10 +311,11 @@ function BetForm({ localTeam, visitorTeam, localVal, visitorVal, betAmount, setL
       <div
         style={{
           marginBottom: '0.9rem',
-          padding: '0.85rem',
-          borderRadius: '1rem',
-          background: 'linear-gradient(135deg, rgba(136,218,136,0.18), rgba(45,120,163,0.08))',
-          border: '1px solid rgba(45,120,163,0.13)',
+          padding: '1rem',
+          borderRadius: '1.5rem',
+          background: 'rgba(245,249,252,0.95)',
+          border: '1px solid rgba(45,120,163,0.08)',
+          backdropFilter: 'blur(10px)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.7rem' }}>
@@ -395,20 +377,20 @@ function BetForm({ localTeam, visitorTeam, localVal, visitorVal, betAmount, setL
           width: '100%',
           minHeight: '3.25rem',
           padding: '0.9rem 1rem',
-          background: `linear-gradient(135deg, ${colors.coral}, ${colors.blue})`,
+          background: colors.green,
           color: '#fff',
           fontWeight: 900,
           fontSize: '0.9rem',
           letterSpacing: '0.04em',
-          boxShadow: '0 16px 30px rgba(249,97,69,0.22)',
+          boxShadow: '0 16px 30px rgba(0,166,81,0.22)',
         }}
         onMouseEnter={e => {
           e.currentTarget.style.transform = 'translateY(-2px)'
-          e.currentTarget.style.boxShadow = '0 20px 36px rgba(45,120,163,0.24)'
+          e.currentTarget.style.boxShadow = '0 20px 36px rgba(0,166,81,0.24)'
         }}
         onMouseLeave={e => {
           e.currentTarget.style.transform = 'translateY(0)'
-          e.currentTarget.style.boxShadow = '0 16px 30px rgba(249,97,69,0.22)'
+          e.currentTarget.style.boxShadow = '0 16px 30px rgba(0,166,81,0.22)'
         }}
         onMouseDown={e => { e.currentTarget.style.transform = 'scale(0.98)' }}
         onMouseUp={e => { e.currentTarget.style.transform = 'translateY(-2px) scale(1)' }}
@@ -517,8 +499,8 @@ function ConfirmedSection({ userBet, matchId, onClear, buttonBase }) {
           gap: '0.85rem',
           padding: '0.85rem',
           borderRadius: '1rem',
-          background: 'linear-gradient(135deg, rgba(136,218,136,0.22), rgba(45,120,163,0.1))',
-          border: '1px solid rgba(45,120,163,0.14)',
+          background: 'rgba(0, 166, 81, 0.08)',
+          border: '1px solid rgba(0, 166, 81, 0.16)',
         }}
       >
         <div style={{ minWidth: 0, display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
@@ -584,9 +566,9 @@ function FinishedSection({ pointsEarned, userBet, match }) {
   const exact = pointsEarned === 3
   const partial = pointsEarned > 0 && pointsEarned < 3
   const state = exact
-    ? { bg: 'linear-gradient(135deg, rgba(136,218,136,0.28), rgba(45,120,163,0.1))', border: 'rgba(45,120,163,0.16)', color: colors.blue, label: 'Marcador exacto' }
+    ? { bg: 'rgba(0, 102, 245, 0.08)', border: 'rgba(0, 102, 245, 0.16)', color: colors.blue, label: 'Marcador exacto' }
     : partial
-      ? { bg: 'linear-gradient(135deg, rgba(249,97,69,0.12), rgba(136,218,136,0.16))', border: 'rgba(249,97,69,0.18)', color: colors.coral, label: `${pointsEarned} punto${pointsEarned > 1 ? 's' : ''}` }
+      ? { bg: 'rgba(225, 26, 39, 0.08)', border: 'rgba(225, 26, 39, 0.16)', color: colors.coral, label: `${pointsEarned} punto${pointsEarned > 1 ? 's' : ''}` }
       : { bg: 'rgba(18,48,68,0.05)', border: 'rgba(18,48,68,0.1)', color: 'rgba(18,48,68,0.58)', label: 'Sin puntos' }
 
   return (

@@ -1,10 +1,24 @@
 import { useState, useEffect } from 'react'
+import Pill from './Pill.jsx'
+
+function useDarkMode() {
+  const [dark, setDark] = useState(() => localStorage.getItem('polla_dark') === '1')
+  useEffect(() => {
+    if (dark) {
+      document.documentElement.classList.add('dark-theme')
+    } else {
+      document.documentElement.classList.remove('dark-theme')
+    }
+    localStorage.setItem('polla_dark', dark ? '1' : '0')
+  }, [dark])
+  return [dark, setDark]
+}
 
 const colors = {
-  green: '#88da88',
-  coral: '#f96145',
-  blue: '#2d78a3',
-  ink: '#123044',
+  green: '#00a651',
+  coral: '#e11a27',
+  blue: '#0066f5',
+  ink: '#102a43',
 }
 
 const icons = {
@@ -14,10 +28,25 @@ const icons = {
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16M4 12h16M7.5 6.5l9 11M16.5 6.5l-9 11" />
     </svg>
   ),
+  grupos: (
+    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+    </svg>
+  ),
   tabla: (
     <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 21h8M12 17v4M7 4h10v4a5 5 0 01-10 0V4z" />
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 5H3v2a4 4 0 004 4M19 5h2v2a4 4 0 01-4 4" />
+    </svg>
+  ),
+  salas: (
+    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a3 3 0 11-6 0 3 3 0 016 0z" />
+    </svg>
+  ),
+  eliminatorias: (
+    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
     </svg>
   ),
   admin: (
@@ -37,11 +66,15 @@ export default function Header({ currentUser, view, onNavigate, onLogout }) {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const navItems = [
-    { key: 'partidos', label: 'Partidos' },
-    { key: 'tabla', label: 'Tabla' },
-    { key: 'admin', label: 'Admin' },
-  ]
+  const navItems = currentUser === 'Proyecto'
+    ? [{ key: 'admin', label: 'Admin' }]
+    : [
+      { key: 'partidos', label: 'Partidos' },
+      { key: 'grupos', label: 'Grupos' },
+      { key: 'tabla', label: 'Tabla' },
+      { key: 'salas', label: 'Salas' },
+      { key: 'eliminatorias', label: 'Fase Final' },
+    ]
 
   const navButtonBase = {
     border: '1px solid transparent',
@@ -50,6 +83,8 @@ export default function Header({ currentUser, view, onNavigate, onLogout }) {
     fontFamily: 'inherit',
     transition: 'transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, color 0.18s ease, border-color 0.18s ease',
   }
+
+  const [dark, setDark] = useDarkMode()
 
   const userInitial = currentUser?.[0]?.toUpperCase() || '?'
 
@@ -62,9 +97,7 @@ export default function Header({ currentUser, view, onNavigate, onLogout }) {
         width: '100%',
         zIndex: 100,
         padding: scrolled ? '0.55rem 1rem 0' : '0.75rem 1rem 0',
-        background: scrolled
-          ? 'linear-gradient(180deg, rgba(251,255,251,0.94), rgba(251,255,251,0.72))'
-          : 'linear-gradient(180deg, rgba(251,255,251,0.86), rgba(251,255,251,0.58))',
+        background: scrolled ? 'rgba(244,246,249,0.95)' : 'rgba(255,255,255,0.9)',
         backdropFilter: 'blur(18px)',
         borderBottom: '1px solid rgba(45,120,163,0.12)',
         boxShadow: scrolled ? '0 18px 46px rgba(18,48,68,0.12)' : '0 10px 28px rgba(18,48,68,0.06)',
@@ -111,11 +144,11 @@ export default function Header({ currentUser, view, onNavigate, onLogout }) {
               height: '2.55rem',
               flex: '0 0 auto',
               borderRadius: '0.9rem',
-              background: `linear-gradient(135deg, ${colors.green}, ${colors.blue})`,
+              background: colors.blue,
               display: 'grid',
               placeItems: 'center',
               color: '#fff',
-              boxShadow: '0 14px 26px rgba(45,120,163,0.24)',
+              boxShadow: '0 14px 26px rgba(0, 102, 245, 0.24)',
             }}
           >
             <span style={{ width: '1.1rem', height: '1.1rem', borderRadius: '50%', border: '3px solid #fff', display: 'block' }} />
@@ -138,8 +171,8 @@ export default function Header({ currentUser, view, onNavigate, onLogout }) {
             gap: '0.35rem',
             padding: '0.32rem',
             borderRadius: '999px',
-            background: 'linear-gradient(135deg, rgba(136,218,136,0.16), rgba(45,120,163,0.1))',
-            border: '1px solid rgba(45,120,163,0.12)',
+            background: 'var(--slate-100)',
+            border: '1px solid var(--slate-200)',
           }}
         >
           {navItems.map(item => {
@@ -156,7 +189,7 @@ export default function Header({ currentUser, view, onNavigate, onLogout }) {
                   alignItems: 'center',
                   gap: '0.45rem',
                   background: active ? '#fff' : 'transparent',
-                  color: active ? colors.blue : 'rgba(18,48,68,0.68)',
+                  color: active ? colors.green : 'rgba(18,48,68,0.68)',
                   borderColor: active ? 'rgba(45,120,163,0.18)' : 'transparent',
                   boxShadow: active ? '0 10px 24px rgba(18,48,68,0.1)' : 'none',
                   fontSize: '0.88rem',
@@ -179,27 +212,14 @@ export default function Header({ currentUser, view, onNavigate, onLogout }) {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', minWidth: 0 }}>
-          <div
-            className="user-pill"
-            style={{
-              minWidth: 0,
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.55rem',
-              padding: '0.35rem 0.8rem 0.35rem 0.35rem',
-              borderRadius: '999px',
-              background: '#fff',
-              border: '1px solid rgba(45,120,163,0.13)',
-              boxShadow: '0 10px 24px rgba(18,48,68,0.07)',
-            }}
-          >
+          <Pill small style={{ paddingLeft: '0.4rem', background: '#fff', border: '1px solid rgba(45,120,163,0.13)', boxShadow: '0 10px 24px rgba(18,48,68,0.07)' }}>
             <span
               style={{
                 width: '2rem',
                 height: '2rem',
                 flex: '0 0 auto',
                 borderRadius: '0.75rem',
-                background: `linear-gradient(135deg, ${colors.coral}, ${colors.blue})`,
+                background: colors.coral,
                 display: 'grid',
                 placeItems: 'center',
                 color: '#fff',
@@ -212,7 +232,30 @@ export default function Header({ currentUser, view, onNavigate, onLogout }) {
             <span style={{ minWidth: 0, maxWidth: '10rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontSize: '0.88rem', fontWeight: 900, color: colors.ink }}>
               {currentUser}
             </span>
-          </div>
+          </Pill>
+
+          {/* Dark mode toggle */}
+          <button
+            onClick={() => setDark(d => !d)}
+            title={dark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+            aria-label="Toggle dark mode"
+            style={{
+              ...navButtonBase,
+              width: '2.75rem',
+              height: '2.75rem',
+              padding: 0,
+              display: 'grid',
+              placeItems: 'center',
+              background: dark ? 'rgba(253,224,71,0.15)' : 'rgba(30,64,175,0.08)',
+              borderColor: dark ? 'rgba(253,224,71,0.3)' : 'rgba(30,64,175,0.15)',
+              color: dark ? '#fbbf24' : '#3b82f6',
+              fontSize: '1.1rem',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px) scale(1.05)' }}
+            onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0) scale(1)' }}
+          >
+            {dark ? '☀️' : '🌙'}
+          </button>
 
           <button
             onClick={onLogout}
@@ -282,8 +325,8 @@ export default function Header({ currentUser, view, onNavigate, onLogout }) {
                 justifyContent: 'center',
                 gap: '0.16rem',
                 color: active ? '#fff' : 'rgba(18,48,68,0.58)',
-                background: active ? `linear-gradient(135deg, ${colors.blue}, ${colors.coral})` : 'transparent',
-                boxShadow: active ? '0 12px 24px rgba(45,120,163,0.2)' : 'none',
+                background: active ? colors.green : 'transparent',
+                boxShadow: active ? '0 12px 24px rgba(0, 166, 81, 0.2)' : 'none',
                 fontSize: '0.7rem',
                 fontWeight: 900,
               }}

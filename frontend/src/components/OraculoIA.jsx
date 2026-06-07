@@ -1,8 +1,8 @@
 const colors = {
-  green: '#88da88',
-  coral: '#f96145',
-  blue: '#2d78a3',
-  ink: '#123044',
+  green: '#00a651',
+  coral: '#e11a27',
+  blue: '#0066f5',
+  ink: '#102a43',
 }
 
 export default function OraculoIA({ golesLocal, golesVisitante }) {
@@ -36,8 +36,8 @@ export default function OraculoIA({ golesLocal, golesVisitante }) {
           borderRadius: '0.5rem',
           display: 'grid',
           placeItems: 'center',
-          background: `linear-gradient(135deg, ${colors.green}, ${colors.coral})`,
-          color: colors.ink,
+          background: colors.blue,
+          color: '#fff',
         }}
       >
         <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
