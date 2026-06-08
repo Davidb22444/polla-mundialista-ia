@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
-import { DB, calculateMatchPoints, buildStandings, showToast } from '../App.jsx'
+import { calculateMatchPoints, buildStandings, showToast } from '../App.jsx'
+import { MatchesApi } from '../api/matches.js'
 import data from '../data/partidos.json'
 import TeamFlag from '../components/TeamFlag.jsx'
 import fondoAdmin from '../assets/fondo_admin.png'
@@ -175,14 +176,21 @@ function TeamBadge({ team }) {
 }
 
 // ─── Admin Page ──────────────────────────────────────────────────
-export default function Admin({ matches, onMatchesChange }) {
-  const users = DB.getUsers()
-
-  const handlePublish = (matchId, lv, vv) => {
-    const updated = matches.map(m => m.id === matchId ? { ...m, resLocal: lv, resVisitor: vv } : m)
-    DB.saveMatches(updated)
-    onMatchesChange(updated)
-    showToast('Resultado publicado y puntos asignados', '🏆')
+export default function Admin({ matches, users, onMatchesChange }) {
+  const handlePublish = async (matchId, lv, vv) => {
+    try {
+      const updatedMatch = await MatchesApi.simulateMatch(matchId, {
+        goles_local: lv,
+        goles_visitante: vv
+      });
+      // The backend will score predictions and update standings.
+      // We just need to trigger a full refresh in App.jsx.
+      onMatchesChange()
+      showToast('Resultado publicado y puntos asignados', '🏆')
+    } catch(err) {
+      console.error(err)
+      showToast('Error al publicar', '❌')
+    }
   }
 
   const handleReset = () => {

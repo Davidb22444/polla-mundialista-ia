@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { DB, showToast } from '../App.jsx'
+import { showToast } from '../App.jsx'
 import data from '../data/partidos.json'
 
 const teams = Object.keys(data.equipos).filter(t => !t.match(/^[A-Z]\d+$/))
 
 export default function ChampionBanner({ currentUser }) {
-  const [predicted, setPredicted] = useState(() => DB.getPredictedChampion(currentUser))
+  const [predicted, setPredicted] = useState('')
   const [selected, setSelected] = useState('')
 
   if (predicted) {
@@ -133,7 +133,6 @@ export default function ChampionBanner({ currentUser }) {
           disabled={!selected}
           onClick={() => {
             if (!selected) return
-            DB.setPredictedChampion(currentUser, selected)
             setPredicted(selected)
             showToast(`🏆 ¡${selected} guardado como tu campeón!`, '🏆')
           }}

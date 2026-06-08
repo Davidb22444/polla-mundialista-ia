@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { DB, showToast, calcularMarcador } from '../App.jsx'
+import { showToast, calcularMarcador } from '../App.jsx'
 import data from '../data/partidos.json'
 import TeamFlag from '../components/TeamFlag.jsx'
 import fondoGrupos from '../assets/fondo_grupos.jpg'
@@ -80,7 +80,8 @@ const groupConfigs = {
 }
 
 export function getGroupStandings(groupName, matches, userBets) {
-  const groupMatches = matches.filter(m => m.grupo === groupName)
+  const config = groupConfigs[groupName] || { letter: groupName }
+  const groupMatches = matches.filter(m => m.grupo === config.letter || m.grupo === groupName)
   const teamNames = new Set()
   groupMatches.forEach(m => {
     teamNames.add(m.local)
@@ -152,12 +153,10 @@ export function getGroupStandings(groupName, matches, userBets) {
   })
 }
 
-export default function Grupos({ currentUser, matches, onMatchesChange }) {
+export default function Grupos({ currentUser, matches, users, onMatchesChange }) {
   const [selectedGroup, setSelectedGroup] = useState(null)
-  const [, forceUpdate] = useState(0)
 
-  const refresh = () => forceUpdate(n => n + 1)
-  const userData = DB.getUserData(currentUser)
+  const userData = users?.find(u => u.name === currentUser) || { bets: {} }
   const userBets = userData.bets || {}
 
   // List of group names
@@ -348,7 +347,9 @@ export default function Grupos({ currentUser, matches, onMatchesChange }) {
           currentUser={currentUser}
           matches={matches}
           userBets={userBets}
-          onSave={refresh}
+          onBet={async (matchId, ls, vs) => { await onMatchesChange && onMatchesChange(); }}
+          onClear={async (matchId) => { await onMatchesChange && onMatchesChange(); }}
+          onSave={() => onMatchesChange && onMatchesChange()}
           onClose={handleCloseGroup}
         />
       )}
@@ -357,9 +358,9 @@ export default function Grupos({ currentUser, matches, onMatchesChange }) {
   )
 }
 
-function GroupModal({ groupName, currentUser, matches, userBets, onSave, onClose }) {
-  const groupMatches = matches.filter(m => m.grupo === groupName)
-  const config = groupConfigs[groupName]
+function GroupModal({ groupName, currentUser, matches, userBets, onBet, onClear, onSave, onClose }) {
+  const config = groupConfigs[groupName] || { letter: groupName }
+  const groupMatches = matches.filter(m => m.grupo === config.letter || m.grupo === groupName)
 
   return (
     <div style={{
@@ -455,6 +456,8 @@ function GroupModal({ groupName, currentUser, matches, userBets, onSave, onClose
               match={match}
               currentUser={currentUser}
               userBet={userBets[match.id]}
+              onBet={onBet}
+              onClear={onClear}
               onSave={onSave}
             />
           ))}
@@ -464,7 +467,7 @@ function GroupModal({ groupName, currentUser, matches, userBets, onSave, onClose
   )
 }
 
-function ModalMatchCard({ match, currentUser, userBet, onSave }) {
+function ModalMatchCard({ match, currentUser, userBet, onBet, onClear, onSave }) {
   const [localScore, setLocalScore] = useState(userBet?.local !== undefined ? String(userBet.local) : '')
   const [visitorScore, setVisitorScore] = useState(userBet?.visitor !== undefined ? String(userBet.visitor) : '')
   const [betAmount, setBetAmount] = useState(userBet?.amount !== undefined ? String(userBet.amount) : '')
@@ -487,24 +490,14 @@ function ModalMatchCard({ match, currentUser, userBet, onSave }) {
     }
 
     const finalAmount = isNaN(amount) || amount < 0 ? 0 : amount
-    const potentialWin = Math.round(finalAmount * 3)
 
-    const userData = DB.getUserData(currentUser)
-    userData.bets[match.id] = {
-      local: ls,
-      visitor: vs,
-      amount: finalAmount,
-      potentialWin
-    }
-    DB.saveUserData(userData)
+    onBet(match.id, ls, vs, finalAmount)
     showToast('¡Pronóstico guardado!', '⚽')
     onSave()
   }
 
   const handleClear = () => {
-    const userData = DB.getUserData(currentUser)
-    delete userData.bets[match.id]
-    DB.saveUserData(userData)
+    onClear(match.id)
     setLocalScore('')
     setVisitorScore('')
     setBetAmount('')

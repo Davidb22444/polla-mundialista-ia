@@ -21,9 +21,12 @@ export async function findMany(table, options = {}) {
 }
 
 export async function findById(table, id, select = '*') {
-  const { data, error } = await supabase.from(table).select(select).eq('id', id).single();
+  // maybeSingle() devuelve null si no hay fila (sin lanzar PGRST116)
+  // .single() lanza error si hay 0 o >1 filas, lo cual confunde 404 con 500
+  const { data, error } = await supabase.from(table).select(select).eq('id', id).maybeSingle();
 
-  if (error) throw httpError(404, `No se encontro el registro en ${table}`, error.message);
+  if (error) throw httpError(500, `Error consultando ${table}`, error.message);
+  if (!data) throw httpError(404, `No se encontró el registro en ${table}`);
 
   return data;
 }

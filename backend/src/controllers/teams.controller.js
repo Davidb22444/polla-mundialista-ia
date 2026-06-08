@@ -25,7 +25,7 @@ export async function getTeamById(req, res, next) {
       .from('teams')
       .select('*')
       .eq('id', req.params.id)
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
     if (!data) throw httpError(404, 'Equipo no encontrado');
@@ -46,12 +46,18 @@ export async function createTeam(req, res, next) {
 
     if (error) throw error;
 
-    await supabase
+    // Crear fila en standings; si ya existe (unique constraint), se ignora
+    const { error: standingsError } = await supabase
       .from('group_standings')
       .insert({
         team_id: data.id,
         grupo: data.grupo
       });
+
+    if (standingsError && standingsError.code !== '23505') {
+      // 23505 = unique_violation (la fila ya existe, no es un error real)
+      console.warn('Advertencia al crear standings para equipo:', standingsError.message);
+    }
 
     res.status(201).json(data);
   } catch (error) {

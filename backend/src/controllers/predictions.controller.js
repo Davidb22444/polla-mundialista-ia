@@ -43,12 +43,12 @@ export async function createPrediction(req, res, next) {
 
     const { data, error } = await supabase
       .from('predictions')
-      .insert({
+      .upsert({
         user_id,
         match_id,
         pred_goles_local,
         pred_goles_visitante
-      })
+      }, { onConflict: 'user_id,match_id' })
       .select()
       .single();
 

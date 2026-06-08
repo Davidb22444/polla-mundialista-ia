@@ -4,7 +4,7 @@ import { matchesRouter } from './matches.routes.js';
 import { predictionsRouter } from './predictions.routes.js';
 import { statisticsRouter } from './statistics.routes.js';
 import { standingsRouter } from './standings.routes.js';
-
+import roomsRouter from './rooms.routes.js';
 export const apiRouter = Router();
 
 apiRouter.get('/health', (_req, res) => {
@@ -16,3 +16,4 @@ apiRouter.use('/matches', matchesRouter);
 apiRouter.use('/predictions', predictionsRouter);
 apiRouter.use('/statistics', statisticsRouter);
 apiRouter.use('/standings', standingsRouter);
+apiRouter.use('/rooms', roomsRouter);

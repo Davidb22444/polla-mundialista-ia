@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { DB, showToast, buildStandings, calculateMatchPoints } from '../App.jsx'
+import { showToast, buildStandings, calculateMatchPoints } from '../App.jsx'
+import { RoomsApi } from '../api/rooms.js'
 import fondoSalas from '../assets/fondo_tabla.jpg'
 import TeamFlag from '../components/TeamFlag.jsx'
 import data from '../data/partidos.json'
@@ -19,38 +20,37 @@ function getAvatarColor(name) {
   return avatarColors[index]
 }
 
-export default function Salas({ currentUser, matches, theme }) {
-  const [rooms, setRooms] = useState(() => DB.getRooms())
+export default function Salas({ currentUser, currentSession, matches, theme, users, rooms, onRoomsChange }) {
   const [selectedRoom, setSelectedRoom] = useState(null)
   const [newRoomName, setNewRoomName] = useState('')
   const [joinCode, setJoinCode] = useState('')
   const [copied, setCopied] = useState(false)
   const [subTab, setSubTab] = useState('ranking') // 'ranking' | 'pronosticos'
 
-  const refreshRooms = () => {
-    const updated = DB.getRooms()
-    setRooms(updated)
-    if (selectedRoom) {
-      const currentSelected = updated.find(r => r.id === selectedRoom.id)
-      setSelectedRoom(currentSelected || null)
-    }
+  const refreshRooms = async () => {
+    onRoomsChange()
   }
 
-  const handleCreateRoom = (e) => {
+  const handleCreateRoom = async (e) => {
     e.preventDefault()
     const name = newRoomName.trim()
     if (!name) {
       showToast('Por favor escribe un nombre para la sala', '⚠️')
       return
     }
-    const created = DB.createRoom(name, currentUser)
-    setNewRoomName('')
-    refreshRooms()
-    setSelectedRoom(created)
-    showToast(`¡Sala "${name}" creada!`, '🎉')
+    try {
+      const created = await RoomsApi.createRoom(name, currentSession.user.id, currentUser)
+      setNewRoomName('')
+      refreshRooms()
+      setSelectedRoom(created)
+      showToast(`¡Sala "${name}" creada!`, '🎉')
+    } catch (err) {
+      void err
+      showToast('Error al crear sala', '❌')
+    }
   }
 
-  const handleJoinRoom = (e) => {
+  const handleJoinRoom = async (e) => {
     e.preventDefault()
     const code = joinCode.trim().toUpperCase()
     if (!code) {
@@ -58,7 +58,7 @@ export default function Salas({ currentUser, matches, theme }) {
       return
     }
     try {
-      const joined = DB.joinRoom(code, currentUser)
+      const joined = await RoomsApi.joinRoom(code, currentSession.user.id, currentUser)
       setJoinCode('')
       refreshRooms()
       setSelectedRoom(joined)
@@ -68,12 +68,17 @@ export default function Salas({ currentUser, matches, theme }) {
     }
   }
 
-  const handleLeaveRoom = (roomId) => {
+  const handleLeaveRoom = async (roomId) => {
     if (window.confirm('¿Seguro que deseas salir de esta sala?')) {
-      DB.leaveRoom(roomId, currentUser)
-      setSelectedRoom(null)
-      refreshRooms()
-      showToast('Has salido de la sala', 'ℹ️')
+      try {
+        await RoomsApi.leaveRoom(roomId, currentSession.user.id)
+        setSelectedRoom(null)
+        refreshRooms()
+        showToast('Has salido de la sala', 'ℹ️')
+      } catch (err) {
+        void err
+        showToast('Error al salir', '❌')
+      }
     }
   }
 
@@ -85,7 +90,6 @@ export default function Salas({ currentUser, matches, theme }) {
   }
 
   // Filter users that are in the active room
-  const users = DB.getUsers()
   const memberNames = selectedRoom ? selectedRoom.members : []
   const roomUsers = users.filter(u => memberNames.includes(u.name))
   const roomStandings = buildStandings(roomUsers, matches)

@@ -8,7 +8,7 @@ function avatarColor(name) {
 }
 function calcPts(bL, bV, rL, rV) {
   if (rL === null || rV === null) return null
-  if (!bL === undefined || bV === undefined) return null
+  if (bL === undefined || bV === undefined) return null
   if (bL === rL && bV === rV) return 3
   let p = 0
   const bR = bL > bV ? 'W' : bL < bV ? 'L' : 'D'
@@ -19,22 +19,23 @@ function calcPts(bL, bV, rL, rV) {
   return Math.min(3, p)
 }
 
-export default function PlayerHistoryModal({ player, matches, onClose }) {
+export default function PlayerHistoryModal({ player, matches, users, onClose }) {
   const userData = useMemo(() => {
-    try { const users = JSON.parse(localStorage.getItem('polla_users') || '[]'); return users.find(u => u.name === player.name) || { bets: {} } } catch { return { bets: {} } }
-  }, [player.name])
+    const found = users?.find(u => u.name === player.name)
+    return found || { bets: {} }
+  }, [player.name, users])
 
   const playedMatches = matches.filter(m => m.resLocal !== null && m.resVisitor !== null)
 
   // Build cumulative data for chart
   const chartData = useMemo(() => {
-    let cum = 0
-    return playedMatches.map(m => {
+    return playedMatches.reduce((acc, m) => {
       const bet = userData.bets[m.id]
       const pts = bet ? calcPts(bet.local, bet.visitor, m.resLocal, m.resVisitor) : 0
-      cum += (pts ?? 0)
-      return { match: m, bet, pts: pts ?? 0, cum }
-    })
+      const prevCum = acc.length > 0 ? acc[acc.length - 1].cum : 0
+      acc.push({ match: m, bet, pts: pts ?? 0, cum: prevCum + (pts ?? 0) })
+      return acc
+    }, [])
   }, [playedMatches, userData])
 
   const maxCum = Math.max(...chartData.map(d => d.cum), 1)

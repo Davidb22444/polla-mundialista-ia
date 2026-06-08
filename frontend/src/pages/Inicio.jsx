@@ -1,18 +1,10 @@
 import { useState, useEffect } from 'react'
 import data from '../data/partidos.json'
 import TeamFlag from '../components/TeamFlag.jsx'
-import { DB } from '../App.jsx'
+import { AuthApi } from '../api/auth.js'
 import fondoInicio from '../assets/fondo_inicio.png'
 
-function hashPassword(password) {
-  let hash = 0
-  for (let i = 0; i < password.length; i++) {
-    const char = password.charCodeAt(i)
-    hash = ((hash << 5) - hash) + char
-    hash = hash & hash
-  }
-  return hash.toString(36)
-}
+// El hashPassword se usaba en localStorage, ya no se necesita.
 
 const inputStyle = {
   width: '100%', padding: '0.85rem 1rem',
@@ -73,7 +65,7 @@ export default function Inicio({ onLogin }) {
     setShowPass(false)
   }
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     const trimmed = name.trim()
     if (!trimmed) { triggerError('Escribe tu nombre'); return }
     if (!password) { triggerError('Escribe tu contraseña'); return }
@@ -87,42 +79,35 @@ export default function Inicio({ onLogin }) {
       return
     }
 
-    const users = DB.getUsers()
-    const user = users.find(u => u.name.toLowerCase() === trimmed.toLowerCase())
-    if (!user) { triggerError('Usuario no encontrado. ¿Ya tienes cuenta?'); return }
-
-    if (!user.passwordHash) {
-      const updated = users.map(u =>
-        u.name.toLowerCase() === trimmed.toLowerCase()
-          ? { ...u, passwordHash: hashPassword(password) } : u
-      )
-      DB.saveUsers(updated)
-      onLogin(user.name)
-      return
+    try {
+      await AuthApi.signIn(trimmed, password)
+      onLogin(trimmed)
+    } catch (err) {
+      console.error(err)
+      triggerError('Usuario o contraseña incorrectos. ¿Ya tienes cuenta?')
     }
-    if (user.passwordHash !== hashPassword(password)) {
-      triggerError('Contraseña incorrecta')
-      return
-    }
-    onLogin(user.name)
   }
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     const trimmed = name.trim()
     if (!trimmed) { triggerError('Escribe un nombre'); return }
     if (trimmed.toLowerCase() === 'proyecto') { triggerError('Ese nombre está reservado'); return }
     if (trimmed.length < 2) { triggerError('Mínimo 2 caracteres'); return }
     if (!password) { triggerError('Crea una contraseña'); return }
-    if (password.length < 4) { triggerError('Mínimo 4 caracteres'); return }
+    if (password.length < 6) { triggerError('Mínimo 6 caracteres para mayor seguridad'); return }
     if (password !== confirmPassword) { triggerError('Las contraseñas no coinciden'); return }
 
-    const users = DB.getUsers()
-    const exists = users.find(u => u.name.toLowerCase() === trimmed.toLowerCase())
-    if (exists) { triggerError('Ese nombre ya está en uso'); return }
-
-    const newUser = { name: trimmed, bets: {}, passwordHash: hashPassword(password) }
-    DB.saveUsers([...users, newUser])
-    onLogin(trimmed)
+    try {
+      await AuthApi.signUp(trimmed, password)
+      onLogin(trimmed)
+    } catch (err) {
+      console.error(err)
+      if (err.message?.includes('already registered')) {
+        triggerError('Ese nombre ya está en uso')
+      } else {
+        triggerError('Error al crear la cuenta')
+      }
+    }
   }
 
   const firstMatch = data.partidos?.[0]

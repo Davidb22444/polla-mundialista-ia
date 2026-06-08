@@ -92,6 +92,18 @@ export default function PartidoCard({ match, userBet, onBet, onClear, index = 0,
   const previewReturns = calculateBetReturns(Number.isNaN(amountValue) ? 0 : amountValue)
 
   const groupThemes = {
+    'A': { color: '#ed1f1a', shadow: 'rgba(237,31,26,0.28)' },
+    'B': { color: '#0873d6', shadow: 'rgba(8,115,214,0.28)' },
+    'C': { color: '#0c8a3f', shadow: 'rgba(12,138,63,0.28)' },
+    'D': { color: '#f05a24', shadow: 'rgba(240,90,36,0.28)' },
+    'E': { color: '#8442c5', shadow: 'rgba(132,66,197,0.28)' },
+    'F': { color: '#d81b60', shadow: 'rgba(216,27,96,0.28)' },
+    'G': { color: '#08a99a', shadow: 'rgba(8,169,154,0.28)' },
+    'H': { color: '#f59e0b', shadow: 'rgba(245,158,11,0.28)' },
+    'I': { color: '#4056b8', shadow: 'rgba(64,86,184,0.28)' },
+    'J': { color: '#009688', shadow: 'rgba(0,150,136,0.28)' },
+    'K': { color: '#f0441a', shadow: 'rgba(240,68,26,0.28)' },
+    'L': { color: '#65443a', shadow: 'rgba(101,68,58,0.28)' },
     'Grupo A': { color: '#ed1f1a', shadow: 'rgba(237,31,26,0.28)' },
     'Grupo B': { color: '#0873d6', shadow: 'rgba(8,115,214,0.28)' },
     'Grupo C': { color: '#0c8a3f', shadow: 'rgba(12,138,63,0.28)' },

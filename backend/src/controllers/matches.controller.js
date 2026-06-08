@@ -121,19 +121,21 @@ export async function simulateMatch(req, res, next) {
 }
 
 async function findTeam(id) {
+  // maybeSingle() no lanza PGRST116 cuando no hay resultados
   const { data, error } = await supabase
     .from('teams')
     .select('*')
     .eq('id', id)
-    .single();
+    .maybeSingle();
 
-  if (error) throw error;
+  if (error) throw httpError(500, 'Error al consultar equipo', error.message);
   if (!data) throw httpError(404, 'Equipo no encontrado');
 
   return data;
 }
 
 async function findMatch(id) {
+  // maybeSingle() no lanza PGRST116 cuando no hay resultados
   const { data, error } = await supabase
     .from('matches')
     .select(`
@@ -142,9 +144,9 @@ async function findMatch(id) {
       equipo_visitante:teams!matches_equipo_visitante_id_fkey(id, nombre, pais_codigo, grupo, ataque, defensa, medio_campo)
     `)
     .eq('id', id)
-    .single();
+    .maybeSingle();
 
-  if (error) throw error;
+  if (error) throw httpError(500, 'Error al consultar partido', error.message);
   if (!data) throw httpError(404, 'Partido no encontrado');
 
   return data;
