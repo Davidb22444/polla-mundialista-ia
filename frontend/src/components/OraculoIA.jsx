@@ -16,7 +16,7 @@ export default function OraculoIA({ golesLocal, golesVisitante }) {
         alignItems: 'center',
         gap: '0.42rem',
         background: 'rgba(255,255,255,0.9)',
-        color: colors.blue,
+        color: 'var(--color-primario, #0066f5)',
         padding: '0.42rem 0.68rem',
         borderRadius: '999px',
         boxShadow: '0 12px 24px rgba(18,48,68,0.12)',
@@ -36,8 +36,8 @@ export default function OraculoIA({ golesLocal, golesVisitante }) {
           borderRadius: '0.5rem',
           display: 'grid',
           placeItems: 'center',
-          background: colors.blue,
-          color: '#fff',
+          background: 'var(--color-primario, #0066f5)',
+          color: 'var(--color-tarjeta, #fff)',
         }}
       >
         <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">

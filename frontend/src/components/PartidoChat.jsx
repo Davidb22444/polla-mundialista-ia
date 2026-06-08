@@ -47,23 +47,24 @@ export default function PartidoChat({ matchId, currentUser }) {
   const count = comments.length
 
   return (
-    <div style={{ marginTop: '0' }}>
+    <div className="partido-chat" style={{ marginTop: '0' }}>
       {/* Toggle button */}
       <button
+        className={open ? 'partido-chat-toggle partido-chat-toggle-open' : 'partido-chat-toggle'}
         onClick={() => setOpen(o => !o)}
         style={{
           width: '100%',
           background: open
-            ? 'linear-gradient(135deg, rgba(0,102,245,0.06), rgba(0,166,81,0.04))'
-            : '#f8fafc',
+            ? 'rgba(0,0,0,0.28)'
+            : 'rgba(0,0,0,0.22)',
           border: 'none',
-          borderTop: '1px solid rgba(18,48,68,0.08)',
+          borderTop: '1px solid rgba(255,255,255,0.15)',
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
           gap: '0.6rem',
           padding: '0.7rem 1rem',
-          color: '#102a43',
+          color: '#fff',
           fontSize: '0.82rem',
           fontWeight: 800,
           fontFamily: 'inherit',
@@ -71,10 +72,10 @@ export default function PartidoChat({ matchId, currentUser }) {
         }}
       >
         {/* Chat icon */}
-        <div style={{
+        <div className="partido-chat-icon" style={{
           width: '1.8rem', height: '1.8rem', borderRadius: '0.5rem', flexShrink: 0,
-          background: open ? '#0066f5' : 'rgba(0,102,245,0.1)',
-          color: open ? '#fff' : '#0066f5',
+          background: open ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.2)',
+          color: '#fff',
           display: 'grid', placeItems: 'center',
           transition: 'all 0.2s',
         }}>
@@ -96,12 +97,12 @@ export default function PartidoChat({ matchId, currentUser }) {
       </button>
 
       {/* Collapsible panel */}
-      <div style={{
+      <div className="partido-chat-collapse" style={{
         overflow: 'hidden',
         maxHeight: open ? '22rem' : '0',
         transition: 'max-height 0.4s cubic-bezier(0.16,1,0.3,1)',
       }}>
-        <div style={{ padding: '0.75rem 1rem 1rem', background: '#f8fafc' }}>
+        <div className="partido-chat-panel" style={{ padding: '0.75rem 1rem 1rem', background: 'rgba(0,0,0,0.25)' }}>
 
           {/* Comment list */}
           <div
@@ -117,32 +118,32 @@ export default function PartidoChat({ matchId, currentUser }) {
             }}
           >
             {comments.length === 0 ? (
-              <div style={{
+              <div className="partido-chat-empty" style={{
                 textAlign: 'center',
                 padding: '1.25rem',
-                background: '#fff',
+                background: 'rgba(255,255,255,0.1)',
                 borderRadius: '0.75rem',
-                border: '1px dashed rgba(18,48,68,0.15)',
+                border: '1px dashed rgba(255,255,255,0.25)',
               }}>
                 <p style={{ margin: 0, fontSize: '1.3rem' }}>💬</p>
-                <p style={{ margin: '0.3rem 0 0', color: 'rgba(18,48,68,0.5)', fontSize: '0.8rem', fontStyle: 'italic' }}>
+                <p style={{ margin: '0.3rem 0 0', color: 'rgba(255,255,255,0.6)', fontSize: '0.8rem', fontStyle: 'italic' }}>
                   Sé el primero en comentar este partido...
                 </p>
               </div>
             ) : (
               comments.map(c => (
-                <div key={c.id} style={{
+                <div key={c.id} className={c.author === currentUser ? 'partido-chat-message partido-chat-message-me' : 'partido-chat-message'} style={{
                   display: 'flex',
                   gap: '0.6rem',
                   alignItems: 'flex-start',
                   background: c.author === currentUser
-                    ? 'rgba(0,102,245,0.06)'
-                    : '#fff',
+                    ? 'rgba(255,255,255,0.18)'
+                    : 'rgba(255,255,255,0.1)',
                   borderRadius: '0.75rem',
                   padding: '0.5rem 0.75rem',
-                  border: '1px solid rgba(18,48,68,0.08)',
+                  border: '1px solid rgba(255,255,255,0.15)',
                 }}>
-                  <div style={{
+                  <div className="partido-chat-avatar" style={{
                     width: '2rem', height: '2rem', borderRadius: '50%', flexShrink: 0,
                     background: avatarColor(c.author),
                     display: 'grid', placeItems: 'center',
@@ -150,12 +151,12 @@ export default function PartidoChat({ matchId, currentUser }) {
                   }}>{c.author[0].toUpperCase()}</div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'baseline', marginBottom: '0.15rem' }}>
-                      <span style={{ fontSize: '0.78rem', fontWeight: 900, color: c.author === currentUser ? '#0066f5' : '#102a43' }}>
+                      <span className="partido-chat-author" style={{ fontSize: '0.78rem', fontWeight: 900, color: c.author === currentUser ? '#93c5fd' : '#fff' }}>
                         {c.author} {c.author === currentUser ? '(Tú)' : ''}
                       </span>
-                      <span style={{ fontSize: '0.65rem', color: 'rgba(18,48,68,0.45)' }}>{timeAgo(c.ts)}</span>
+                      <span className="partido-chat-time" style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.45)' }}>{timeAgo(c.ts)}</span>
                     </div>
-                    <p style={{ margin: 0, fontSize: '0.83rem', color: 'rgba(18,48,68,0.85)', lineHeight: 1.45, wordBreak: 'break-word' }}>
+                    <p className="partido-chat-text" style={{ margin: 0, fontSize: '0.83rem', color: 'rgba(255,255,255,0.85)', lineHeight: 1.45, wordBreak: 'break-word' }}>
                       {c.text}
                     </p>
                   </div>
@@ -165,8 +166,9 @@ export default function PartidoChat({ matchId, currentUser }) {
           </div>
 
           {/* Input area */}
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <div className="partido-chat-form" style={{ display: 'flex', gap: '0.5rem' }}>
             <input
+              className="partido-chat-input"
               value={text}
               onChange={e => setText(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && submit()}
@@ -175,31 +177,32 @@ export default function PartidoChat({ matchId, currentUser }) {
               style={{
                 flex: 1,
                 padding: '0.7rem 1rem',
-                background: '#fff',
-                border: '1.5px solid rgba(18,48,68,0.12)',
+                background: 'rgba(255,255,255,0.12)',
+                border: '1.5px solid rgba(255,255,255,0.25)',
                 borderRadius: '0.75rem',
-                color: '#102a43',
+                color: '#fff',
                 fontSize: '0.85rem',
                 fontFamily: 'inherit',
                 outline: 'none',
                 transition: 'border-color 0.2s, box-shadow 0.2s',
               }}
               onFocus={e => {
-                e.target.style.borderColor = '#0066f5'
-                e.target.style.boxShadow = '0 0 0 3px rgba(0,102,245,0.15)'
+                e.target.style.borderColor = 'rgba(255,255,255,0.6)'
+                e.target.style.boxShadow = '0 0 0 3px rgba(255,255,255,0.15)'
               }}
               onBlur={e => {
-                e.target.style.borderColor = 'rgba(18,48,68,0.12)'
+                e.target.style.borderColor = 'rgba(255,255,255,0.25)'
                 e.target.style.boxShadow = 'none'
               }}
             />
             <button
+              className={text.trim() ? 'partido-chat-submit partido-chat-submit-ready' : 'partido-chat-submit'}
               onClick={submit}
               disabled={!text.trim()}
               style={{
-                background: text.trim() ? '#0066f5' : 'rgba(18,48,68,0.06)',
+                background: text.trim() ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.15)',
                 border: 'none',
-                color: text.trim() ? '#fff' : 'rgba(18,48,68,0.35)',
+                color: text.trim() ? '#102a43' : 'rgba(255,255,255,0.45)',
                 borderRadius: '0.75rem',
                 padding: '0.7rem 1.1rem',
                 cursor: text.trim() ? 'pointer' : 'not-allowed',
@@ -207,7 +210,7 @@ export default function PartidoChat({ matchId, currentUser }) {
                 fontSize: '0.85rem',
                 fontFamily: 'inherit',
                 transition: 'all 0.18s',
-                boxShadow: text.trim() ? '0 4px 12px rgba(0,102,245,0.35)' : 'none',
+                boxShadow: text.trim() ? '0 4px 12px rgba(0,0,0,0.2)' : 'none',
                 whiteSpace: 'nowrap',
               }}
             >

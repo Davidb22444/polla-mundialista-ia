@@ -11,16 +11,16 @@ export default function ChampionBanner({ currentUser }) {
   if (predicted) {
     return (
       <div style={{
-        background: 'rgba(248,250,252,0.94)',
+        background: 'var(--color-tarjeta, #ffffff)',
         borderRadius: '1.5rem',
         padding: '1.25rem 1.75rem',
         marginBottom: '2rem',
         display: 'flex',
         alignItems: 'center',
         gap: '1.25rem',
-        boxShadow: '0 12px 34px rgba(15,23,42,0.16)',
+        boxShadow: '0 16px 40px rgba(18,48,68,0.08)',
         flexWrap: 'wrap',
-        border: '1px solid rgba(226,232,240,0.9)',
+        border: '1px solid rgba(18,48,68,0.08)',
       }}>
         <div style={{
           width: '3.5rem', height: '3.5rem', borderRadius: '1rem',
@@ -31,10 +31,10 @@ export default function ChampionBanner({ currentUser }) {
           <p style={{ margin: 0, fontWeight: 900, fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
             Tu pronóstico de campeón Mundial 2026
           </p>
-          <p style={{ margin: '0.2rem 0 0', color: '#0f172a', fontWeight: 900, fontSize: '1.5rem' }}>{predicted}</p>
+          <p style={{ margin: '0.2rem 0 0', color: 'var(--color-texto, #0f172a)', fontWeight: 900, fontSize: '1.5rem' }}>{predicted}</p>
         </div>
         <div style={{
-          background: '#fff',
+          background: '#f8fafc',
           border: '1px solid #e2e8f0',
           borderRadius: '1rem',
           padding: '0.6rem 1rem',
@@ -59,54 +59,71 @@ export default function ChampionBanner({ currentUser }) {
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, rgba(20,30,60,0.97), rgba(40,20,80,0.95))',
-      border: '2px solid #f59e0b',
+      background: 'var(--color-tarjeta, #ffffff)',
+      border: '1px solid rgba(0,102,245,0.15)',
       borderRadius: '1.5rem',
       padding: '1.75rem',
       marginBottom: '2rem',
-      boxShadow: '0 0 0 4px rgba(245,158,11,0.12), 0 20px 50px rgba(0,0,0,0.4)',
-      backdropFilter: 'blur(16px)',
+      boxShadow: '0 16px 40px rgba(18,48,68,0.08), 0 0 0 4px rgba(0,102,245,0.05)',
+      position: 'relative',
+      overflow: 'hidden',
     }}>
-      {/* Glowing header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
+      {/* Decorative gradient overlay */}
+      <div style={{
+        position: 'absolute', top: 0, right: 0, width: '250px', height: '100%',
+        background: 'radial-gradient(ellipse at right, rgba(245,158,11,0.08) 0%, transparent 70%)',
+        pointerEvents: 'none',
+      }} />
+
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem', position: 'relative', zIndex: 1 }}>
         <div style={{
           width: '3.5rem', height: '3.5rem', borderRadius: '1rem', flexShrink: 0,
-          background: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
+          background: 'linear-gradient(135deg, #fffbeb, #fef3c7)',
           display: 'grid', placeItems: 'center', fontSize: '2rem',
-          boxShadow: '0 8px 20px rgba(245,158,11,0.5)'
+          boxShadow: '0 8px 16px rgba(245,158,11,0.15)',
+          border: '1px solid #fde68a',
         }}>🏆</div>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-            <p style={{ margin: 0, fontWeight: 900, color: '#fbbf24', fontSize: '1.1rem', fontFamily: 'Syne, sans-serif' }}>
+            <p style={{ margin: 0, fontWeight: 900, color: '#102a43', fontSize: '1.1rem', fontFamily: 'Syne, sans-serif' }}>
               ¡Pronostica al Campeón del Mundo!
             </p>
-            <span style={{ background: '#f59e0b', color: '#fff', fontSize: '0.68rem', fontWeight: 900, padding: '0.2rem 0.55rem', borderRadius: '999px' }}>
+            <span style={{ background: '#f59e0b', color: 'var(--color-tarjeta, #fff)', fontSize: '0.68rem', fontWeight: 900, padding: '0.2rem 0.55rem', borderRadius: '999px' }}>
               NUEVO
             </span>
           </div>
-          <p style={{ margin: 0, color: 'rgba(255,255,255,0.65)', fontSize: '0.85rem' }}>
-            Si aciertas al campeón, obtienes un <strong style={{ color: '#fbbf24' }}>bonus de +10 puntos</strong> extra. Confirma antes de que empiece el torneo.
+          <p style={{ margin: 0, color: '#627d98', fontSize: '0.85rem' }}>
+            Si aciertas al campeón, obtienes un <strong style={{ color: '#d97706' }}>bonus de +10 puntos</strong> extra. Confirma antes de que empiece el torneo.
           </p>
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', position: 'relative', zIndex: 1 }}>
         <select
           value={selected}
           onChange={e => setSelected(e.target.value)}
           style={{
             flex: '1 1 14rem',
             padding: '0.9rem 1.1rem',
-            background: 'rgba(255,255,255,0.95)',
-            border: '2px solid rgba(245,158,11,0.5)',
+            background: '#f8fafc',
+            border: '1.5px solid rgba(18,48,68,0.12)',
             borderRadius: '0.9rem',
             fontSize: '1rem',
             fontWeight: 700,
-            color: '#0f172a',
+            color: '#102a43',
             fontFamily: 'inherit',
             outline: 'none',
             cursor: 'pointer',
-            boxShadow: '0 4px 14px rgba(0,0,0,0.2)',
+            transition: 'border-color 0.2s, box-shadow 0.2s',
+          }}
+          onFocus={e => {
+            e.target.style.borderColor = '#0066f5'
+            e.target.style.boxShadow = '0 0 0 3px rgba(0,102,245,0.15)'
+          }}
+          onBlur={e => {
+            e.target.style.borderColor = 'rgba(18,48,68,0.12)'
+            e.target.style.boxShadow = 'none'
           }}
         >
           <option value="">🌍 Selecciona un equipo...</option>
@@ -121,10 +138,8 @@ export default function ChampionBanner({ currentUser }) {
             showToast(`🏆 ¡${selected} guardado como tu campeón!`, '🏆')
           }}
           style={{
-            background: selected
-              ? 'linear-gradient(135deg, #f59e0b, #d97706)'
-              : 'rgba(255,255,255,0.1)',
-            color: selected ? '#fff' : 'rgba(255,255,255,0.4)',
+            background: selected ? '#0066f5' : '#f1f5f9',
+            color: selected ? '#fff' : '#94a3b8',
             border: 'none',
             padding: '0.9rem 2rem',
             borderRadius: '0.9rem',
@@ -133,7 +148,7 @@ export default function ChampionBanner({ currentUser }) {
             cursor: selected ? 'pointer' : 'not-allowed',
             fontFamily: 'inherit',
             transition: 'all 0.2s',
-            boxShadow: selected ? '0 8px 24px rgba(245,158,11,0.45)' : 'none',
+            boxShadow: selected ? '0 8px 24px rgba(0,102,245,0.35)' : 'none',
             whiteSpace: 'nowrap',
           }}
         >

@@ -175,7 +175,7 @@ export default function Grupos({ currentUser, matches, onMatchesChange }) {
     <div style={{
       position: 'relative',
       minHeight: '100vh',
-      backgroundImage: `url(${fondoGrupos})`,
+      backgroundImage: `var(--bg-grupos, url(${fondoGrupos}))`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
@@ -191,7 +191,7 @@ export default function Grupos({ currentUser, matches, onMatchesChange }) {
       }} />
       <div style={{ position: 'relative', zIndex: 1, maxWidth: '80rem', margin: '0 auto', padding: '6rem 1rem 3rem' }}>
       <div style={{ marginBottom: '2.5rem' }}>
-        <h2 style={{ fontFamily: 'Syne, sans-serif', fontSize: '2.25rem', fontWeight: 800, margin: 0, color: '#fff', textShadow: '0 2px 12px rgba(0,0,0,0.5)' }}>
+        <h2 style={{ fontFamily: 'Syne, sans-serif', fontSize: '2.25rem', fontWeight: 800, margin: 0, color: 'var(--color-tarjeta, #fff)', textShadow: '0 2px 12px rgba(0,0,0,0.5)' }}>
           Fase de <span style={{ color: '#00a651' }}>Grupos</span>
         </h2>
         <p style={{ color: 'rgba(255,255,255,0.72)', fontSize: '0.95rem', marginTop: '0.35rem' }}>
@@ -216,7 +216,7 @@ export default function Grupos({ currentUser, matches, onMatchesChange }) {
               className="group-card"
               style={{
                 background: config.color,
-                color: '#fff',
+                color: 'var(--color-tarjeta, #fff)',
                 borderRadius: '1.25rem',
                 padding: '1.25rem 1.25rem 1.75rem',
                 cursor: 'pointer',
@@ -240,7 +240,7 @@ export default function Grupos({ currentUser, matches, onMatchesChange }) {
                   fontSize: '1.45rem',
                   letterSpacing: '0.04em',
                   margin: 0,
-                  color: '#fff',
+                  color: 'var(--color-tarjeta, #fff)',
                   textShadow: '0 2px 8px rgba(0,0,0,0.16)'
                 }}>
                   GRUPO {config.letter}
@@ -375,7 +375,7 @@ function GroupModal({ groupName, currentUser, matches, userBets, onSave, onClose
     }} onClick={onClose}>
       <div
         style={{
-          background: '#fff',
+          background: 'var(--color-tarjeta, #fff)',
           borderRadius: '1.75rem',
           padding: '2rem',
           maxWidth: '44rem',
@@ -400,7 +400,7 @@ function GroupModal({ groupName, currentUser, matches, userBets, onSave, onClose
           <div>
             <span style={{
               background: config.color,
-              color: '#fff',
+              color: 'var(--color-tarjeta, #fff)',
               fontSize: '0.75rem',
               fontWeight: 900,
               padding: '0.3rem 0.75rem',
@@ -549,7 +549,7 @@ function ModalMatchCard({ match, currentUser, userBet, onSave }) {
         top: '0.65rem',
         right: '6.5rem',
         fontSize: '0.68rem',
-        background: '#fff',
+        background: 'var(--color-tarjeta, #fff)',
         border: '1px solid var(--slate-200)',
         borderRadius: '999px',
         padding: '0.15rem 0.55rem',
@@ -601,7 +601,7 @@ function ModalMatchCard({ match, currentUser, userBet, onSave }) {
               textAlign: 'center',
               fontSize: '1.1rem',
               fontWeight: 900,
-              background: '#fff',
+              background: 'var(--color-tarjeta, #fff)',
               border: '1.5px solid var(--slate-200)',
               borderRadius: '0.65rem',
               outline: 'none',
@@ -623,7 +623,7 @@ function ModalMatchCard({ match, currentUser, userBet, onSave }) {
               textAlign: 'center',
               fontSize: '1.1rem',
               fontWeight: 900,
-              background: '#fff',
+              background: 'var(--color-tarjeta, #fff)',
               border: '1.5px solid var(--slate-200)',
               borderRadius: '0.65rem',
               outline: 'none',
@@ -668,7 +668,7 @@ function ModalMatchCard({ match, currentUser, userBet, onSave }) {
               value={betAmount}
               onChange={e => setBetAmount(e.target.value)}
               style={{
-                background: '#fff',
+                background: 'var(--color-tarjeta, #fff)',
                 border: '1px solid var(--slate-200)',
                 borderRadius: '0.5rem',
                 padding: '0.35rem 0.65rem',
@@ -686,7 +686,7 @@ function ModalMatchCard({ match, currentUser, userBet, onSave }) {
               <button
                 onClick={handleClear}
                 style={{
-                  background: '#fff',
+                  background: 'var(--color-tarjeta, #fff)',
                   border: '1px solid rgba(239,83,80,0.4)',
                   color: '#ef5350',
                   padding: '0.35rem 0.75rem',
@@ -704,7 +704,7 @@ function ModalMatchCard({ match, currentUser, userBet, onSave }) {
               style={{
                 background: 'var(--brand-500)',
                 border: 0,
-                color: '#fff',
+                color: 'var(--color-tarjeta, #fff)',
                 padding: '0.35rem 0.85rem',
                 borderRadius: '0.5rem',
                 fontSize: '0.8rem',

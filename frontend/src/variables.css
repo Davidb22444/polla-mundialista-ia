@@ -1,0 +1,17 @@
+:root {
+  --color-fondo: #f5f7fa;
+  --color-tarjeta: #ffffff;
+  --color-texto: #111111;
+  --color-primario: #e94560;
+  --color-secundario: #1a1a2e;
+}
+
+/* TEMA COLOMBIA */
+[data-theme="colombia"] {
+  --color-fondo: #0f1b2d;
+  --color-tarjeta: #00143c;
+  --color-texto: #ffffff;
+  --color-primario: #FCD116;
+  --color-secundario: #003893;
+  --color-acento: #CE1126;
+}

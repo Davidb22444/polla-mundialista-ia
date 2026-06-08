@@ -28,7 +28,7 @@ const inputStyle = {
 function primaryBtn(color) {
   return {
     width: '100%', padding: '0.9rem', borderRadius: '0.875rem',
-    background: color, color: '#fff', border: 0,
+    background: color, color: 'var(--color-tarjeta, #fff)', border: 0,
     fontSize: '0.95rem', fontWeight: 900, cursor: 'pointer',
     fontFamily: 'inherit',
     boxShadow: `0 8px 20px ${color}44`,
@@ -176,7 +176,7 @@ export default function Inicio({ onLogin }) {
             padding: '0.45rem 1rem', borderRadius: '999px',
             background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.18)',
             fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.1em',
-            textTransform: 'uppercase', color: '#fff', marginBottom: '2rem',
+            textTransform: 'uppercase', color: 'var(--color-tarjeta, #fff)', marginBottom: '2rem',
           }}>
             <span style={{ width: '0.5rem', height: '0.5rem', borderRadius: '50%', background: '#4ade80', boxShadow: '0 0 0 4px rgba(74,222,128,0.2)' }} />
             FIFA World Cup 2026
@@ -185,7 +185,7 @@ export default function Inicio({ onLogin }) {
           <h1 style={{
             fontFamily: 'Syne, sans-serif', margin: '0 0 1.25rem',
             fontSize: 'clamp(2.4rem, 5.5vw, 4.8rem)',
-            fontWeight: 900, lineHeight: 0.92, color: '#fff',
+            fontWeight: 900, lineHeight: 0.92, color: 'var(--color-tarjeta, #fff)',
             letterSpacing: '-0.02em',
           }}>
             Polla<br />
@@ -210,7 +210,7 @@ export default function Inicio({ onLogin }) {
               { v: '3 pts', l: 'Máximo' },
             ].map(({ v, l }) => (
               <div key={l}>
-                <div style={{ fontSize: '1.75rem', fontWeight: 900, color: '#fff', lineHeight: 1 }}>{v}</div>
+                <div style={{ fontSize: '1.75rem', fontWeight: 900, color: 'var(--color-tarjeta, #fff)', lineHeight: 1 }}>{v}</div>
                 <div style={{ fontSize: '0.68rem', fontWeight: 700, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: '0.25rem' }}>{l}</div>
               </div>
             ))}
@@ -226,12 +226,12 @@ export default function Inicio({ onLogin }) {
               <span style={{ fontSize: '0.62rem', fontWeight: 900, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Primer duelo</span>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <TeamFlag code={localTeam?.code} name={firstMatch.local} style={{ width: '1.3rem', height: '1.3rem', borderRadius: '50%' }} />
-                <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#fff' }}>{firstMatch.local}</span>
+                <span style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--color-tarjeta, #fff)' }}>{firstMatch.local}</span>
               </div>
               <span style={{ fontSize: '0.7rem', fontWeight: 900, color: '#e11a27' }}>vs</span>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <TeamFlag code={visitorTeam?.code} name={firstMatch.visitante} style={{ width: '1.3rem', height: '1.3rem', borderRadius: '50%' }} />
-                <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#fff' }}>{firstMatch.visitante}</span>
+                <span style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--color-tarjeta, #fff)' }}>{firstMatch.visitante}</span>
               </div>
             </div>
           )}
@@ -240,7 +240,7 @@ export default function Inicio({ onLogin }) {
             <div style={{ display: 'flex', gap: '0.85rem', flexWrap: 'wrap' }}>
               <button onClick={() => goToMode('login')} style={{
                 padding: '0.875rem 2rem', borderRadius: '999px',
-                background: '#0066f5', color: '#fff', border: 0,
+                background: 'var(--color-primario, #0066f5)', color: 'var(--color-tarjeta, #fff)', border: 0,
                 fontSize: '0.9rem', fontWeight: 900, cursor: 'pointer', fontFamily: 'inherit',
                 boxShadow: '0 8px 24px rgba(0,102,245,0.35)',
                 transition: 'transform 0.18s, box-shadow 0.18s',
@@ -252,7 +252,7 @@ export default function Inicio({ onLogin }) {
               </button>
               <button onClick={() => goToMode('register')} style={{
                 padding: '0.875rem 2rem', borderRadius: '999px',
-                background: 'rgba(255,255,255,0.1)', color: '#fff',
+                background: 'rgba(255,255,255,0.1)', color: 'var(--color-tarjeta, #fff)',
                 border: '1px solid rgba(255,255,255,0.22)',
                 fontSize: '0.9rem', fontWeight: 900, cursor: 'pointer', fontFamily: 'inherit',
                 transition: 'transform 0.18s, background 0.18s',
@@ -337,7 +337,7 @@ export default function Inicio({ onLogin }) {
                     <button onClick={handleLogin} style={primaryBtn('#00a651')}>Entrar →</button>
                     <p style={{ textAlign: 'center', fontSize: '0.78rem', color: 'var(--slate-500)', margin: '0.25rem 0 0' }}>
                       ¿No tienes cuenta?{' '}
-                      <button onClick={() => goToMode('register')} style={{ background: 'none', border: 0, cursor: 'pointer', color: '#0066f5', fontWeight: 800, fontSize: '0.78rem', fontFamily: 'inherit', padding: 0 }}>
+                      <button onClick={() => goToMode('register')} style={{ background: 'none', border: 0, cursor: 'pointer', color: 'var(--color-primario, #0066f5)', fontWeight: 800, fontSize: '0.78rem', fontFamily: 'inherit', padding: 0 }}>
                         Créala aquí
                       </button>
                     </p>
@@ -390,7 +390,7 @@ export default function Inicio({ onLogin }) {
                     <button onClick={handleRegister} style={primaryBtn('#e11a27')}>Crear cuenta →</button>
                     <p style={{ textAlign: 'center', fontSize: '0.78rem', color: 'var(--slate-500)', margin: '0.25rem 0 0' }}>
                       ¿Ya tienes cuenta?{' '}
-                      <button onClick={() => goToMode('login')} style={{ background: 'none', border: 0, cursor: 'pointer', color: '#0066f5', fontWeight: 800, fontSize: '0.78rem', fontFamily: 'inherit', padding: 0 }}>
+                      <button onClick={() => goToMode('login')} style={{ background: 'none', border: 0, cursor: 'pointer', color: 'var(--color-primario, #0066f5)', fontWeight: 800, fontSize: '0.78rem', fontFamily: 'inherit', padding: 0 }}>
                         Inicia sesión
                       </button>
                     </p>

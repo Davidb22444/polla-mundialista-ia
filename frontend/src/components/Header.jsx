@@ -2,18 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Pill from './Pill.jsx'
 
-function useDarkMode() {
-  const [dark, setDark] = useState(() => localStorage.getItem('polla_dark') === '1')
-  useEffect(() => {
-    if (dark) {
-      document.documentElement.classList.add('dark-theme')
-    } else {
-      document.documentElement.classList.remove('dark-theme')
-    }
-    localStorage.setItem('polla_dark', dark ? '1' : '0')
-  }, [dark])
-  return [dark, setDark]
-}
+
 
 const colors = {
   green: '#00a651',
@@ -84,7 +73,7 @@ export default function Header({ currentUser, view, onNavigate, onLogout }) {
         { key: 'eliminatorias', label: 'Fase Final' },
       ]
 
-  const [dark, setDark] = useDarkMode()
+
   const userInitial = currentUser?.[0]?.toUpperCase() || '?'
 
   // Variantes para animaciones
@@ -172,10 +161,10 @@ export default function Header({ currentUser, view, onNavigate, onLogout }) {
                 height: '2.55rem',
                 flex: '0 0 auto',
                 borderRadius: '0.9rem',
-                background: colors.blue,
+                background: 'var(--color-primario, #0066f5)',
                 display: 'grid',
                 placeItems: 'center',
-                color: '#fff',
+                color: 'var(--color-tarjeta, #fff)',
                 boxShadow: '0 14px 26px rgba(0, 102, 245, 0.24)',
               }}
             >
@@ -185,7 +174,7 @@ export default function Header({ currentUser, view, onNavigate, onLogout }) {
               <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: '1rem', letterSpacing: 0, whiteSpace: 'nowrap' }}>
                 Polla Mundialista
               </span>
-              <span style={{ marginTop: '0.22rem', color: colors.blue, fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+              <span style={{ marginTop: '0.22rem', color: 'var(--color-primario, #0066f5)', fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                 Mundial 2026
               </span>
             </span>
@@ -208,13 +197,14 @@ export default function Header({ currentUser, view, onNavigate, onLogout }) {
               const active = view === item.key
               return (
                 <motion.button
-                  key={item.key}
+                                  key={item.key}
                   onClick={() => onNavigate(item.key)}
                   layout
                   initial={false}
+                  className={active ? 'nav-active' : ''}
                   animate={{
                     background: active ? '#fff' : 'transparent',
-                    color: active ? colors.blue : 'rgba(18,48,68,0.68)', // CAMBIADO: colors.green → colors.blue
+                    color: active ? colors.blue : 'rgba(18,48,68,0.68)',
                     borderColor: active ? 'rgba(0,102,245,0.25)' : 'transparent',
                     boxShadow: active ? '0 10px 24px rgba(0,102,245,0.15)' : 'none',
                   }}
@@ -250,7 +240,7 @@ export default function Header({ currentUser, view, onNavigate, onLogout }) {
             animate="visible"
             style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', minWidth: 0 }}
           >
-            <Pill small style={{ paddingLeft: '0.4rem', background: '#fff', border: '1px solid rgba(45,120,163,0.13)', boxShadow: '0 10px 24px rgba(18,48,68,0.07)' }}>
+            <Pill small style={{ paddingLeft: '0.4rem', background: 'var(--color-tarjeta, #fff)', border: '1px solid rgba(45,120,163,0.13)', boxShadow: '0 10px 24px rgba(18,48,68,0.07)' }}>
               <span
                 style={{
                   width: '2rem',
@@ -260,7 +250,7 @@ export default function Header({ currentUser, view, onNavigate, onLogout }) {
                   background: colors.coral,
                   display: 'grid',
                   placeItems: 'center',
-                  color: '#fff',
+                  color: 'var(--color-tarjeta, #fff)',
                   fontWeight: 900,
                   fontSize: '0.78rem',
                 }}
@@ -272,32 +262,6 @@ export default function Header({ currentUser, view, onNavigate, onLogout }) {
               </span>
             </Pill>
 
-            {/* Dark mode toggle */}
-            <motion.button
-              key={dark ? 'dark' : 'light'}
-              onClick={() => setDark(d => !d)}
-              title={dark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
-              aria-label="Toggle dark mode"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              whileHover={{ scale: 1.1, y: -2 }}
-              whileTap={{ scale: 0.9 }}
-              transition={{ type: 'spring', stiffness: 500, damping: 15 }}
-              style={{
-                ...navButtonBase,
-                width: '2.75rem',
-                height: '2.75rem',
-                padding: 0,
-                display: 'grid',
-                placeItems: 'center',
-                background: dark ? 'rgba(253,224,71,0.15)' : 'rgba(30,64,175,0.08)',
-                borderColor: dark ? 'rgba(253,224,71,0.3)' : 'rgba(30,64,175,0.15)',
-                color: dark ? '#fbbf24' : '#3b82f6',
-                fontSize: '1.1rem',
-              }}
-            >
-              {dark ? '☀️' : '🌙'}
-            </motion.button>
 
             {/* Logout button */}
             <motion.button
@@ -307,7 +271,7 @@ export default function Header({ currentUser, view, onNavigate, onLogout }) {
               whileHover={{ 
                 y: -2, 
                 backgroundColor: colors.coral, 
-                color: '#fff',
+                color: 'var(--color-tarjeta, #fff)',
                 boxShadow: '0 12px 24px rgba(249,97,69,0.24)'
               }}
               whileTap={{ scale: 0.9 }}
@@ -355,13 +319,14 @@ export default function Header({ currentUser, view, onNavigate, onLogout }) {
             const active = view === item.key
             return (
               <motion.button
-                key={item.key}
+                                key={item.key}
                 onClick={() => onNavigate(item.key)}
                 layout
                 initial={false}
+                className={active ? 'nav-active' : ''}
                 animate={{
                   color: active ? '#fff' : 'rgba(18,48,68,0.58)',
-                  background: active ? colors.blue : 'transparent', // CAMBIADO: colors.green → colors.blue
+                  background: active ? colors.blue : 'transparent',
                   boxShadow: active ? '0 12px 24px rgba(0,102,245,0.25)' : 'none',
                 }}
                 whileTap={{ scale: 0.95 }}

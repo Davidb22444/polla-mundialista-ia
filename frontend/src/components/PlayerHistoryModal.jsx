@@ -62,7 +62,7 @@ export default function PlayerHistoryModal({ player, matches, onClose }) {
       }}
     >
       <div style={{
-        background: '#fff', borderRadius: 'var(--card-radius)', width: '100%', maxWidth: '42rem',
+        background: 'var(--color-tarjeta, #fff)', borderRadius: 'var(--card-radius)', width: '100%', maxWidth: '42rem',
         maxHeight: '88vh', overflow: 'auto', boxShadow: '0 30px 80px rgba(0,0,0,0.3)',
         border: '1px solid rgba(0,0,0,0.06)', animation: 'slideUp 0.3s cubic-bezier(0.16,1,0.3,1)'
       }}>
@@ -73,14 +73,14 @@ export default function PlayerHistoryModal({ player, matches, onClose }) {
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
             <div style={{
               width: '3.5rem', height: '3.5rem', borderRadius: '1rem', background: color,
-              display: 'grid', placeItems: 'center', color: '#fff', fontWeight: 900, fontSize: '1.4rem'
+              display: 'grid', placeItems: 'center', color: 'var(--color-tarjeta, #fff)', fontWeight: 900, fontSize: '1.4rem'
             }}>{player.name[0].toUpperCase()}</div>
             <div>
               <h3 style={{ margin: 0, fontFamily: 'Syne, sans-serif', fontSize: '1.3rem', fontWeight: 800 }}>{player.name}</h3>
               <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.4rem', flexWrap: 'wrap' }}>
                 <Pill small variant="brand">{player.totalPoints} puntos</Pill>
-                <Pill small style={{ background: '#fff', color: '#d97706' }}>🎯 {player.exactScores} exactos</Pill>
-                <Pill small style={{ background: '#fff', color: '#64748b' }}>{player.betsMade} apuestas</Pill>
+                <Pill small style={{ background: 'var(--color-tarjeta, #fff)', color: '#d97706' }}>🎯 {player.exactScores} exactos</Pill>
+                <Pill small style={{ background: 'var(--color-tarjeta, #fff)', color: '#64748b' }}>{player.betsMade} apuestas</Pill>
               </div>
             </div>
           </div>

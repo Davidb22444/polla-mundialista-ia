@@ -75,7 +75,7 @@ function MatchRow({ match, users, onPublish }) {
 
   const inputStyle = {
     width: '100%', padding: '0.75rem 1rem',
-    background: '#fff', border: '1.5px solid var(--slate-200)',
+    background: 'var(--color-tarjeta, #fff)', border: '1.5px solid var(--slate-200)',
     borderRadius: '0.75rem', fontSize: '1.1rem', fontWeight: 700,
     textAlign: 'center', outline: 'none', fontFamily: 'inherit',
     transition: 'border-color 0.2s, box-shadow 0.2s',
@@ -94,7 +94,7 @@ function MatchRow({ match, users, onPublish }) {
           <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--brand-600)', background: 'var(--brand-50)', padding: '0.2rem 0.625rem', borderRadius: '0.5rem', border: '1px solid var(--brand-100)' }}>{match.grupo}</span>
           <span style={{ fontSize: '0.7rem', color: 'var(--slate-400)' }}>{match.fecha}</span>
           {hasResult
-            ? <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#fff', background: 'var(--brand-500)', padding: '0.2rem 0.625rem', borderRadius: '0.5rem' }}>FINALIZADO</span>
+            ? <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-tarjeta, #fff)', background: 'var(--brand-500)', padding: '0.2rem 0.625rem', borderRadius: '0.5rem' }}>FINALIZADO</span>
             : <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#92400e', background: '#fef3c7', padding: '0.2rem 0.625rem', borderRadius: '0.5rem', border: '1px solid #fde68a' }}>PENDIENTE</span>}
         </div>
       </div>
@@ -118,7 +118,7 @@ function MatchRow({ match, users, onPublish }) {
         </div>
         <button
           onClick={handlePublish}
-          style={{ padding: '0.75rem 1.25rem', background: '#0066f5', color: '#fff', border: 'none', borderRadius: '0.75rem', fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 4px 12px rgba(15,23,42,0.2)', transition: 'background 0.2s, transform 0.1s', whiteSpace: 'nowrap' }}
+          style={{ padding: '0.75rem 1.25rem', background: 'var(--color-primario, #0066f5)', color: 'var(--color-tarjeta, #fff)', border: 'none', borderRadius: '0.75rem', fontWeight: 700, fontSize: '0.875rem', cursor: 'pointer', fontFamily: 'inherit', boxShadow: '0 4px 12px rgba(15,23,42,0.2)', transition: 'background 0.2s, transform 0.1s', whiteSpace: 'nowrap' }}
           onMouseEnter={e => e.currentTarget.style.background = '#0052c7'}
           onMouseLeave={e => e.currentTarget.style.background = '#0066f5'}
           onMouseDown={e => e.currentTarget.style.transform = 'scale(0.97)'}
@@ -239,14 +239,14 @@ export default function Admin({ matches, onMatchesChange }) {
         
         <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: '1rem', padding: '2rem', width: '100%', boxSizing: 'border-box' }}>
           <div>
-            <h2 style={{ fontFamily: 'Syne, sans-serif', fontSize: '2.5rem', fontWeight: 800, margin: 0, color: '#fff', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
+            <h2 style={{ fontFamily: 'Syne, sans-serif', fontSize: '2.5rem', fontWeight: 800, margin: 0, color: 'var(--color-tarjeta, #fff)', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
               Panel de <span style={{ color: '#00a651' }}>Control</span>
             </h2>
             <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '1rem', marginTop: '0.35rem', fontWeight: 500, textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>Gestiona resultados y monitorea el torneo.</p>
           </div>
           <div style={{ display: 'flex', gap: '0.75rem' }}>
-            <button onClick={handleReset} style={{ padding: '0.6rem 1.1rem', background: 'rgba(220,38,38,0.9)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700, color: '#fff', cursor: 'pointer', fontFamily: 'inherit', transition: 'transform 0.2s', backdropFilter: 'blur(4px)' }} onMouseEnter={e => e.currentTarget.style.transform='scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform='scale(1)'}>Resetear App</button>
-            <button onClick={() => { localStorage.removeItem('polla-current-user'); window.location.reload(); }} style={{ padding: '0.6rem 1.1rem', background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700, color: '#fff', cursor: 'pointer', fontFamily: 'inherit', backdropFilter: 'blur(8px)', transition: 'transform 0.2s' }} onMouseEnter={e => e.currentTarget.style.transform='scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform='scale(1)'}>Cerrar sesión</button>
+            <button onClick={handleReset} style={{ padding: '0.6rem 1.1rem', background: 'rgba(220,38,38,0.9)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700, color: 'var(--color-tarjeta, #fff)', cursor: 'pointer', fontFamily: 'inherit', transition: 'transform 0.2s', backdropFilter: 'blur(4px)' }} onMouseEnter={e => e.currentTarget.style.transform='scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform='scale(1)'}>Resetear App</button>
+            <button onClick={() => { localStorage.removeItem('polla-current-user'); window.location.reload(); }} style={{ padding: '0.6rem 1.1rem', background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '0.75rem', fontSize: '0.875rem', fontWeight: 700, color: 'var(--color-tarjeta, #fff)', cursor: 'pointer', fontFamily: 'inherit', backdropFilter: 'blur(8px)', transition: 'transform 0.2s' }} onMouseEnter={e => e.currentTarget.style.transform='scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform='scale(1)'}>Cerrar sesión</button>
           </div>
         </div>
       </div>

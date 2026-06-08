@@ -1,0 +1,472 @@
+/* ═══════════════════════════════════════════════════════════
+   DECORACIONES – Solo visibles en Tema Colombia
+═══════════════════════════════════════════════════════════ */
+
+[data-theme="colombia"] .decoracion-tema {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+}
+
+[data-theme="colombia"] .decoracion-izquierda {
+  left: 0;
+  top: 20%;
+  width: 200px;
+  height: 300px;
+  background: url('./assets/orquideas.png') no-repeat center/contain;
+}
+
+[data-theme="colombia"] .decoracion-derecha {
+  right: 0;
+  bottom: 10%;
+  width: 220px;
+  height: 280px;
+  background: url('./assets/sombrero.png') no-repeat center/contain;
+}
+
+[data-theme="colombia"] .fondo-tema {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('./assets/fondo-estadio.jpg') center/cover no-repeat;
+  opacity: 0.1;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   VARIABLES GLOBALES DEL TEMA COLOMBIA
+═══════════════════════════════════════════════════════════ */
+[data-theme="colombia"] {
+  --slate-50: var(--color-fondo);
+  --slate-900: var(--color-texto);
+  --brand-500: var(--color-primario);
+  --brand-400: var(--color-primario);
+  --brand-600: var(--color-secundario);
+  --color-terciario: #003893;
+  --col-amarillo: #dca311; /* Tono amarillo más legible (dorado) */
+  --col-rojo:     #b91c28; /* Tono rojo más legible */
+  --col-azul:     #0c3b88; /* Tono azul más legible */
+  --col-azul-oscuro: #00143c;
+  --col-azul-header: rgba(0, 20, 60, 0.94);
+  --col-azul-panel: rgba(0, 20, 60, 0.88);
+  --col-borde: rgba(252, 209, 22, 0.24);
+
+  /* Fondos específicos por sección */
+  --bg-partidos:   url('./assets/persoonascolombia.jpg');
+  --bg-grupos:     url('./assets/colombia.jpg');
+  --bg-tabla:      url('./assets/barranquilla.jpg');
+  --bg-salas:      url('./assets/falcao.jpg');
+  --bg-fase-final: url('./assets/james.jpg');
+}
+
+[data-theme="colombia"] body {
+  background-color: var(--color-fondo) !important;
+  color: var(--color-texto) !important;
+}
+
+[data-theme="colombia"] input,
+[data-theme="colombia"] select,
+[data-theme="colombia"] textarea {
+  background-color: var(--col-azul-oscuro) !important;
+  border-color: var(--col-borde) !important;
+  color: #ffffff !important;
+}
+
+[data-theme="colombia"] input::placeholder,
+[data-theme="colombia"] textarea::placeholder {
+  color: rgba(255, 255, 255, 0.62) !important;
+}
+
+[data-theme="colombia"] select option {
+  background: var(--col-azul-oscuro);
+  color: #ffffff;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   1. HEADER – Barra de navegación
+═══════════════════════════════════════════════════════════ */
+
+[data-theme="colombia"] .app-header {
+  background: rgba(0, 10, 30, 0.82) !important;
+  border-bottom-color: rgba(252, 209, 22, 0.3) !important;
+}
+
+[data-theme="colombia"] .header-bar {
+  background: rgba(0, 20, 60, 0.92) !important;
+  border-color: rgba(252, 209, 22, 0.25) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Logo y texto de marca: blanco */
+[data-theme="colombia"] .header-brand {
+  color: #fff !important;
+}
+
+/* "Mundial 2026" en amarillo */
+[data-theme="colombia"] .header-brand span span:last-child {
+  color: var(--col-amarillo) !important;
+}
+
+/* Contenedor de nav desktop */
+[data-theme="colombia"] .desktop-nav {
+  background: rgba(0, 20, 60, 0.7) !important;
+  border-color: rgba(252, 209, 22, 0.25) !important;
+}
+
+/* Todos los botones: texto blanco suave */
+[data-theme="colombia"] .desktop-nav button {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+/* Botones INACTIVOS: transparentes siempre (override sobre Framer Motion) */
+[data-theme="colombia"] .desktop-nav button:not(.nav-active) {
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+}
+
+/* Botón ACTIVO: amarillo con texto oscuro */
+[data-theme="colombia"] .desktop-nav button.nav-active {
+  background: var(--col-amarillo) !important;
+  color: #0a1628 !important;
+  box-shadow: 0 6px 20px rgba(252, 209, 22, 0.45) !important;
+  border-color: rgba(252, 209, 22, 0.5) !important;
+}
+
+/* Mobile nav */
+[data-theme="colombia"] .mobile-nav {
+  background: rgba(0, 20, 60, 0.97) !important;
+  border-color: rgba(252, 209, 22, 0.2) !important;
+}
+
+[data-theme="colombia"] .mobile-nav button {
+  color: rgba(255, 255, 255, 0.65) !important;
+}
+
+/* Botón activo en mobile: amarillo */
+[data-theme="colombia"] .mobile-nav button.nav-active {
+  background: var(--col-amarillo) !important;
+  color: #0a1628 !important;
+}
+
+[data-theme="colombia"] .user-section > div,
+[data-theme="colombia"] .user-section [style*="background: var(--color-tarjeta"],
+[data-theme="colombia"] .user-section [style*="background: #fff"],
+[data-theme="colombia"] .user-section [style*="background: rgba(255,255,255"] {
+  background: var(--col-azul-panel) !important;
+  border-color: var(--col-borde) !important;
+  color: #ffffff !important;
+}
+
+[data-theme="colombia"] .user-section span {
+  color: #ffffff !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   2. TÍTULOS Y TEXTOS PRINCIPALES
+═══════════════════════════════════════════════════════════ */
+
+/* El span coloreado (ej. "en Vivo") → amarillo en Colombia */
+[data-theme="colombia"] h2 span[style*="color: #00a651"],
+[data-theme="colombia"] h2 span[style*="color: rgb(0, 166, 81)"] {
+  color: var(--col-amarillo) !important;
+}
+
+[data-theme="colombia"] h2 {
+  text-shadow: 0 3px 18px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Punto de "Sistema activo": verde → amarillo */
+[data-theme="colombia"] div[style*="background: #4ade80"],
+[data-theme="colombia"] div[style*="background: rgb(74, 222, 128)"] {
+  background: var(--col-amarillo) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   3. TARJETAS DE PARTIDOS – Tricolor Colombia
+═══════════════════════════════════════════════════════════ */
+
+/* Ciclo tricolor: amarillo → rojo → azul */
+[data-theme="colombia"] .partido-card:nth-child(3n+1) {
+  background: var(--col-amarillo) !important;
+  box-shadow: 0 16px 40px rgba(252, 209, 22, 0.35) !important;
+}
+[data-theme="colombia"] .partido-card:nth-child(3n+2) {
+  background: var(--col-rojo) !important;
+  box-shadow: 0 16px 40px rgba(206, 17, 38, 0.38) !important;
+}
+[data-theme="colombia"] .partido-card:nth-child(3n+3) {
+  background: var(--col-azul) !important;
+  box-shadow: 0 16px 40px rgba(0, 56, 147, 0.38) !important;
+}
+
+/* Textos oscuros en tarjetas amarillas (para contraste) */
+[data-theme="colombia"] .partido-card:nth-child(3n+1) > div > div,
+[data-theme="colombia"] .partido-card:nth-child(3n+1) span[style*="color: rgba(255,255,255"] {
+  color: #ffffff !important; /* Ahora el amarillo es oscuro, usamos texto blanco */
+}
+
+[data-theme="colombia"] .partido-card:nth-child(3n+1) > div > div:first-child span,
+[data-theme="colombia"] .partido-card:nth-child(3n+1) > div > div:first-child div,
+[data-theme="colombia"] .partido-card:nth-child(3n+1) > div > div:first-child svg {
+  color: #ffffff !important;
+}
+
+[data-theme="colombia"] .partido-card:nth-child(3n+1) > div > div:first-child span:first-child {
+  background: rgba(0, 0, 0, 0.25) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
+}
+
+[data-theme="colombia"] .partido-card:nth-child(3n+1) > div > div:first-child span:first-child span {
+  background: #ffffff !important;
+}
+
+[data-theme="colombia"] .partido-card:nth-child(3n+1) > div > div:first-child > span:last-child {
+  background: rgba(0, 0, 0, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+}
+
+/* El bloque del marcador (match-stage) con fondo semitransparente en todos */
+[data-theme="colombia"] .partido-card .match-stage {
+  background: rgba(0, 0, 0, 0.22) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Nombres de equipo dentro del match-stage – texto oscuro siempre */
+[data-theme="colombia"] .partido-card .match-stage p,
+[data-theme="colombia"] .partido-card .match-stage span {
+  color: #ffffff !important;
+}
+
+/* Badge del Oráculo IA – borde amarillo */
+[data-theme="colombia"] .partido-card .match-stage > div {
+  border-color: var(--col-amarillo) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   4. CHAMPION BANNER Y ELEMENTOS SECUNDARIOS
+═══════════════════════════════════════════════════════════ */
+
+/* Acento general en amarillo para cualquier elemento de color primario */
+[data-theme="colombia"] [style*="color: var(--color-primario"],
+[data-theme="colombia"] [style*="color: #0066f5"],
+[data-theme="colombia"] [style*="color: rgb(0, 102, 245)"] {
+  color: var(--col-amarillo) !important;
+}
+
+/* Fondos de acento primario → amarillo */
+[data-theme="colombia"] [style*="background: var(--color-primario"],
+[data-theme="colombia"] [style*="background: #0066f5"],
+[data-theme="colombia"] [style*="background: rgb(0, 102, 245)"] {
+  background: var(--col-amarillo) !important;
+  color: #0a1628 !important;
+}
+
+[data-theme="colombia"] [style*="background: var(--color-tarjeta"],
+[data-theme="colombia"] .partido-card [style*="background: #fff"],
+[data-theme="colombia"] .partido-card [style*="background: #ffffff"],
+[data-theme="colombia"] .partido-card [style*="background: rgba(255,255,255"],
+[data-theme="colombia"] .partido-card [style*="background: rgba(255, 255, 255"],
+[data-theme="colombia"] .partido-card [style*="background: rgba(245,249,252"],
+[data-theme="colombia"] .partido-card [style*="background: #f8fafc"],
+[data-theme="colombia"] .partido-card [style*="background: #f1f5f9"] {
+  background: rgba(0, 0, 0, 0.22) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+[data-theme="colombia"] [style*="color: var(--color-tarjeta"],
+[data-theme="colombia"] .partido-card [style*="color: #fff"],
+[data-theme="colombia"] .partido-card [style*="color: #ffffff"] {
+  color: #ffffff !important;
+}
+
+[data-theme="colombia"] [style*="color: #102a43"],
+[data-theme="colombia"] [style*="color: var(--color-texto"],
+[data-theme="colombia"] [style*="color: rgba(18,48,68"],
+[data-theme="colombia"] [style*="color: rgba(18, 48, 68"] {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+
+[data-theme="colombia"] .partido-card:nth-child(3n+1) [style*="background: var(--color-tarjeta"],
+[data-theme="colombia"] .partido-card:nth-child(3n+1) [style*="background: #fff"],
+[data-theme="colombia"] .partido-card:nth-child(3n+1) [style*="background: rgba(255,255,255"],
+[data-theme="colombia"] .partido-card:nth-child(3n+1) [style*="background: rgba(245,249,252"],
+[data-theme="colombia"] .partido-card:nth-child(3n+1) [style*="background: #f8fafc"] {
+  background: rgba(0, 0, 0, 0.22) !important;
+}
+
+[data-theme="colombia"] .standings-table-card {
+  background: var(--col-azul-panel) !important;
+  border-color: var(--col-borde) !important;
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.35) !important;
+}
+
+[data-theme="colombia"] .standings-table-card table {
+  background: transparent !important;
+}
+
+[data-theme="colombia"] .standings-table-head {
+  background: rgba(0, 20, 60, 0.96) !important;
+  border-bottom-color: var(--col-borde) !important;
+}
+
+[data-theme="colombia"] .standings-table-head th {
+  color: rgba(255, 255, 255, 0.72) !important;
+}
+
+[data-theme="colombia"] .standings-row {
+  background: rgba(0, 20, 60, 0.78) !important;
+  border-bottom-color: rgba(252, 209, 22, 0.14) !important;
+}
+
+[data-theme="colombia"] .standings-row-me {
+  background: rgba(0, 56, 147, 0.64) !important;
+}
+
+[data-theme="colombia"] .standings-row:hover {
+  background: rgba(0, 56, 147, 0.74) !important;
+}
+
+[data-theme="colombia"] .standings-row td,
+[data-theme="colombia"] .standings-row span,
+[data-theme="colombia"] .standings-row div {
+  color: #ffffff !important;
+}
+
+[data-theme="colombia"] .standings-row [style*="background: var(--slate-100"],
+[data-theme="colombia"] .standings-row [style*="background: var(--slate-200"] {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid var(--col-borde) !important;
+}
+
+[data-theme="colombia"] .standings-row .badge-chip,
+[data-theme="colombia"] .standings-row .streak-badge,
+[data-theme="colombia"] .standings-row [class*="pill"] {
+  color: #0a1628 !important;
+}
+
+[data-theme="colombia"] .partido-chat {
+  background: var(--col-azul-panel) !important;
+  border-color: var(--col-borde) !important;
+}
+
+[data-theme="colombia"] .match-stats-panel,
+[data-theme="colombia"] .partido-chat-shell {
+  background: rgba(0, 0, 0, 0.22) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+[data-theme="colombia"] .match-stats-title {
+  color: rgba(255, 255, 255, 0.82) !important;
+}
+
+[data-theme="colombia"] .match-stats-bar {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-theme="colombia"] .match-stats-percentages span {
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35) !important;
+}
+
+[data-theme="colombia"] .match-stats-percentages span:first-child {
+  color: #22c55e !important;
+}
+
+[data-theme="colombia"] .match-stats-percentages span:nth-child(2) {
+  color: #fbbf24 !important;
+}
+
+[data-theme="colombia"] .match-stats-percentages span:last-child {
+  color: #fb7185 !important;
+}
+
+[data-theme="colombia"] .bet-amount-panel {
+  background: rgba(0, 0, 0, 0.22) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+[data-theme="colombia"] .bet-amount-label,
+[data-theme="colombia"] .bet-amount-hint {
+  color: rgba(255, 255, 255, 0.82) !important;
+}
+
+[data-theme="colombia"] .bet-amount-panel [style*="color: var(--color-primario"] {
+  color: var(--col-amarillo) !important;
+}
+
+[data-theme="colombia"] .partido-chat-toggle {
+  background: var(--col-azul-panel) !important;
+  border-top-color: var(--col-borde) !important;
+  color: #ffffff !important;
+}
+
+[data-theme="colombia"] .partido-chat-toggle-open {
+  background: rgba(0, 20, 60, 0.96) !important;
+}
+
+[data-theme="colombia"] .partido-chat-icon {
+  background: var(--col-amarillo) !important;
+  color: #0a1628 !important;
+}
+
+[data-theme="colombia"] .partido-chat-panel {
+  background: rgba(0, 0, 0, 0.3) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+[data-theme="colombia"] .partido-chat-empty,
+[data-theme="colombia"] .partido-chat-message {
+  background: rgba(0, 35, 90, 0.72) !important;
+  border-color: rgba(252, 209, 22, 0.22) !important;
+}
+
+[data-theme="colombia"] .partido-chat-message-me {
+  background: rgba(0, 56, 147, 0.78) !important;
+}
+
+[data-theme="colombia"] .partido-chat-author {
+  color: var(--col-amarillo) !important;
+}
+
+[data-theme="colombia"] .partido-chat-time,
+[data-theme="colombia"] .partido-chat-text,
+[data-theme="colombia"] .partido-chat-empty p {
+  color: rgba(255, 255, 255, 0.82) !important;
+}
+
+[data-theme="colombia"] .partido-chat-avatar {
+  color: #ffffff !important;
+  box-shadow: 0 0 0 2px rgba(252, 209, 22, 0.22) !important;
+}
+
+[data-theme="colombia"] .partido-chat-input {
+  background: #00143c !important;
+  border-color: var(--col-borde) !important;
+  color: #ffffff !important;
+}
+
+[data-theme="colombia"] .partido-chat-input::placeholder {
+  color: rgba(255, 255, 255, 0.62) !important;
+}
+
+[data-theme="colombia"] .partido-chat-submit {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.52) !important;
+}
+
+[data-theme="colombia"] .partido-chat-submit-ready {
+  background: #ffffff !important;
+  color: #0a1628 !important;
+  box-shadow: 0 10px 22px rgba(255, 255, 255, 0.28) !important;
+}
+
+/* Botón "Guardar Pronóstico" verde → rojo Colombia */
+[data-theme="colombia"] [style*="background: #00a651"],
+[data-theme="colombia"] [style*="background: rgb(0, 166, 81)"] {
+  background: var(--col-rojo) !important;
+  box-shadow: 0 16px 30px rgba(206, 17, 38, 0.28) !important;
+}

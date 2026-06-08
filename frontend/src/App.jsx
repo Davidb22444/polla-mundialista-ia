@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useLayoutEffect } from 'react'
 import Pill from './components/Pill.jsx'
 import './App.css'
 import data from './data/partidos.json'
@@ -147,7 +147,7 @@ function Toast() {
       position: 'fixed', bottom: '1.5rem', right: '1.5rem', zIndex: 9999,
       display: 'flex', alignItems: 'center', gap: '0.75rem',
       padding: '0.75rem 1.25rem', borderRadius: '0.75rem',
-      background: 'rgba(15,23,42,0.95)', color: '#fff',
+      background: 'rgba(15,23,42,0.95)', color: 'var(--color-tarjeta, #fff)',
       border: '1px solid rgba(255,255,255,0.1)',
       backdropFilter: 'blur(16px)',
       boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
@@ -262,7 +262,7 @@ function Tabla({ currentUser, matches, refreshKey }) {
     <div style={{
       position: 'relative',
       minHeight: '100vh',
-      backgroundImage: `url(${fondoTabla})`,
+      backgroundImage: `var(--bg-tabla, url(${fondoTabla}))`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
@@ -290,7 +290,7 @@ function Tabla({ currentUser, matches, refreshKey }) {
           {podiumOrder.map((player, idx) => !player ? <div key={idx} /> : (
             <div key={player.name} className="animate-fade-in-up" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', animationDelay: `${idx * 0.1}s` }}>
               <div style={{ textAlign: 'center', marginBottom: '0.75rem' }}>
-                <div style={{ width: '3.5rem', height: '3.5rem', borderRadius: '50%', background: '#fff', border: '3px solid #fff', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', fontWeight: 700, color: 'var(--slate-700)', margin: '0 auto 0.5rem' }}>{player.name[0]}</div>
+                <div style={{ width: '3.5rem', height: '3.5rem', borderRadius: '50%', background: 'var(--color-tarjeta, #fff)', border: '3px solid #fff', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.1rem', fontWeight: 700, color: 'var(--slate-700)', margin: '0 auto 0.5rem' }}>{player.name[0]}</div>
                 <p style={{ fontWeight: 700, fontSize: '0.875rem', margin: '0 0 0.2rem', color: 'var(--slate-800)' }}>{player.name}</p>
                 <p style={{ fontSize: '0.75rem', color: 'var(--slate-500)', margin: 0 }}>{player.totalPoints} pts</p>
                 {player.currentStreak >= 2 && <span className="streak-badge" style={{ marginTop: '0.25rem' }}>🔥 {player.currentStreak} seguidos</span>}
@@ -304,11 +304,11 @@ function Tabla({ currentUser, matches, refreshKey }) {
       )}
 
       {/* Table */}
-      <div className="glass" style={{ borderRadius: '1rem', boxShadow: '0 4px 24px rgba(0,0,0,0.06)', overflow: 'hidden' }}>
+      <div className="glass standings-table-card" style={{ borderRadius: '1rem', boxShadow: '0 4px 24px rgba(0,0,0,0.06)', overflow: 'hidden' }}>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ background: 'rgba(248,250,252,0.8)', borderBottom: '1px solid var(--slate-200)' }}>
+              <tr className="standings-table-head" style={{ background: 'rgba(248,250,252,0.8)', borderBottom: '1px solid var(--slate-200)' }}>
                 {['#', 'Jugador', 'Racha', 'Logros', 'Exactos', 'Puntos'].map(h => (
                   <th key={h} style={{ padding: '0.85rem 1rem', fontSize: '0.7rem', fontWeight: 700, color: 'var(--slate-500)', textTransform: 'uppercase', letterSpacing: '0.05em', textAlign: h === 'Jugador' || h === '#' ? 'left' : 'center' }}>{h}</th>
                 ))}
@@ -324,6 +324,7 @@ function Tabla({ currentUser, matches, refreshKey }) {
                   <tr
                     key={player.name}
                     onClick={() => setSelectedPlayer(player)}
+                    className={isMe ? 'standings-row standings-row-me' : 'standings-row'}
                     style={{ background: isMe ? 'rgba(16,185,129,0.04)' : 'transparent', borderBottom: '1px solid var(--slate-100)', transition: 'background 0.15s', cursor: 'pointer' }}
                     onMouseEnter={e => e.currentTarget.style.background = isMe ? 'rgba(16,185,129,0.08)' : 'rgba(0,0,0,0.02)'}
                     onMouseLeave={e => e.currentTarget.style.background = isMe ? 'rgba(16,185,129,0.04)' : 'transparent'}
@@ -447,7 +448,7 @@ function Partidos({ currentUser, matches, onMatchesChange }) {
       style={{
         position: 'relative',
         minHeight: '100vh',
-        backgroundImage: `url(${fondoMundial})`,
+        backgroundImage: `var(--bg-partidos, url(${fondoMundial}))`,
         backgroundSize: 'cover',
         backgroundPosition: 'center top',
         backgroundRepeat: 'no-repeat',
@@ -477,7 +478,7 @@ function Partidos({ currentUser, matches, onMatchesChange }) {
       <div style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: '1rem' }}>
           <div>
-            <h2 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.875rem', fontWeight: 800, margin: 0, color: '#fff', textShadow: '0 2px 12px rgba(0,0,0,0.4)' }}>
+            <h2 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.875rem', fontWeight: 800, margin: 0, color: 'var(--color-tarjeta, #fff)', textShadow: '0 2px 12px rgba(0,0,0,0.4)' }}>
               Partidos <span style={{ color: '#00a651' }}>en Vivo</span>
             </h2>
             <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '0.875rem', marginTop: '0.25rem' }}>
@@ -486,7 +487,7 @@ function Partidos({ currentUser, matches, onMatchesChange }) {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.12)', padding: '0.65rem 1rem', borderRadius: '999px', border: '1px solid rgba(255,255,255,0.25)', backdropFilter: 'blur(8px)' }}>
             <div style={{ width: '0.5rem', height: '0.5rem', borderRadius: '50%', background: '#4ade80', animation: 'pulseGlow 2s infinite' }} />
-            <span style={{ fontSize: '0.75rem', fontWeight: 500, color: '#fff' }}>Sistema de predicción activo</span>
+            <span style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--color-tarjeta, #fff)' }}>Sistema de predicción activo</span>
           </div>
         </div>
 
@@ -500,7 +501,7 @@ function Partidos({ currentUser, matches, onMatchesChange }) {
             onChange={(e) => setSelectedDay(e.target.value)}
             style={{
               border: '1px solid rgba(45,120,163,0.18)',
-              background: '#fff',
+              background: 'var(--color-tarjeta, #fff)',
               color: 'var(--slate-700)',
               borderRadius: '1rem',
               padding: '0.85rem 1rem',
@@ -517,7 +518,7 @@ function Partidos({ currentUser, matches, onMatchesChange }) {
             onChange={e => setSelectedGroup(e.target.value)}
             style={{
               border: '1px solid rgba(45,120,163,0.18)',
-              background: '#fff',
+              background: 'var(--color-tarjeta, #fff)',
               color: 'var(--slate-700)',
               borderRadius: '1rem',
               padding: '0.85rem 1rem',
@@ -539,7 +540,7 @@ function Partidos({ currentUser, matches, onMatchesChange }) {
               style={{
                 border: '1px solid rgba(0,166,81,0.16)',
                 background: '#00a651',
-                color: '#fff',
+                color: 'var(--color-tarjeta, #fff)',
                 borderRadius: '999px',
                 padding: '0.55rem 0.95rem',
                 cursor: 'pointer',
@@ -564,8 +565,8 @@ function Partidos({ currentUser, matches, onMatchesChange }) {
             onClick={() => setSelectedDay('')}
             style={{
               border: '1px solid rgba(0,102,245,0.16)',
-              background: '#0066f5',
-              color: '#fff',
+              background: 'var(--color-primario, #0066f5)',
+              color: 'var(--color-tarjeta, #fff)',
               borderRadius: '999px',
               padding: '0.55rem 0.95rem',
               cursor: 'pointer',
@@ -614,6 +615,17 @@ export default function App() {
   const [refreshKey, setRefreshKey] = useState(0)
   const [showGuide, setShowGuide] = useState(false)
   const [guideStep, setGuideStep] = useState(0)
+  const [temaActual, setTemaActual] = useState(() => localStorage.getItem('tema-polla') || 'default')
+
+  useLayoutEffect(() => {
+    if (view === 'login' || view === 'admin') {
+      document.documentElement.setAttribute('data-theme', 'default')
+    } else {
+      document.documentElement.setAttribute('data-theme', temaActual)
+    }
+    localStorage.setItem('tema-polla', temaActual)
+  }, [temaActual, view])
+
 
   const guideSteps = [
     {
@@ -631,16 +643,16 @@ export default function App() {
       description: (
         <div style={{ lineHeight: 1.8 }}>
           <p style={{ margin: '0 0 0.5rem', fontWeight: 700, color: '#059669' }}>💚 5 Puntos: Marcador Exacto</p>
-          <p style={{ margin: '0 0 0.75rem', fontSize: '0.92rem', color: '#475569' }}>Adivinaste el resultado exacto. Ej: dijiste 2-1 y fue 2-1.</p>
+          <p style={{ margin: '0 0 0.75rem', fontSize: '0.92rem', color: 'var(--color-texto, #475569)' }}>Adivinaste el resultado exacto. Ej: dijiste 2-1 y fue 2-1.</p>
           
-          <p style={{ margin: '0.5rem 0 0.5rem', fontWeight: 700, color: '#0066f5' }}>🔵 3 Puntos: Resultado y Tendencia</p>
-          <p style={{ margin: '0 0 0.75rem', fontSize: '0.92rem', color: '#475569' }}>Ganador correcto + diferencia de goles. Ej: dijiste 1-0 y quedó 2-1.</p>
+          <p style={{ margin: '0.5rem 0 0.5rem', fontWeight: 700, color: 'var(--color-primario, #0066f5)' }}>🔵 3 Puntos: Resultado y Tendencia</p>
+          <p style={{ margin: '0 0 0.75rem', fontSize: '0.92rem', color: 'var(--color-texto, #475569)' }}>Ganador correcto + diferencia de goles. Ej: dijiste 1-0 y quedó 2-1.</p>
           
           <p style={{ margin: '0.5rem 0 0.5rem', fontWeight: 700, color: '#f97316' }}>🟠 1 Punto: Acierto Simple</p>
-          <p style={{ margin: '0 0 0.75rem', fontSize: '0.92rem', color: '#475569' }}>Solo adivinaste al ganador/empate. Ej: dijiste 3-0 y quedó 1-0.</p>
+          <p style={{ margin: '0 0 0.75rem', fontSize: '0.92rem', color: 'var(--color-texto, #475569)' }}>Solo adivinaste al ganador/empate. Ej: dijiste 3-0 y quedó 1-0.</p>
           
           <p style={{ margin: '0.5rem 0 0.5rem', fontWeight: 700, color: '#ef4444' }}>❌ 0 Puntos: Error Total</p>
-          <p style={{ margin: 0, fontSize: '0.92rem', color: '#475569' }}>No acertaste al ganador. Ej: dijiste Equipo A y ganó Equipo B.</p>
+          <p style={{ margin: 0, fontSize: '0.92rem', color: 'var(--color-texto, #475569)' }}>No acertaste al ganador. Ej: dijiste Equipo A y ganó Equipo B.</p>
         </div>
       ),
       target: 'Tabla de Puntos',
@@ -654,13 +666,13 @@ export default function App() {
           </p>
           
           <p style={{ margin: '0.5rem 0 0.5rem', fontWeight: 700, color: '#059669' }}>🥇 1º: Mayor cantidad de marcadores exactos</p>
-          <p style={{ margin: '0 0 0.75rem', fontSize: '0.92rem', color: '#475569' }}>Los de 5 puntos. Quien arriesgó y acertó más resultados clavados merece ganar.</p>
+          <p style={{ margin: '0 0 0.75rem', fontSize: '0.92rem', color: 'var(--color-texto, #475569)' }}>Los de 5 puntos. Quien arriesgó y acertó más resultados clavados merece ganar.</p>
           
-          <p style={{ margin: '0.5rem 0 0.5rem', fontWeight: 700, color: '#0066f5' }}>🥈 2º: Mayor cantidad de resultados de tendencia</p>
-          <p style={{ margin: '0 0 0.75rem', fontSize: '0.92rem', color: '#475569' }}>Los de 3 puntos. Si persiste la igualdad, gana quien tuvo más aciertos de tendencia.</p>
+          <p style={{ margin: '0.5rem 0 0.5rem', fontWeight: 700, color: 'var(--color-primario, #0066f5)' }}>🥈 2º: Mayor cantidad de resultados de tendencia</p>
+          <p style={{ margin: '0 0 0.75rem', fontSize: '0.92rem', color: 'var(--color-texto, #475569)' }}>Los de 3 puntos. Si persiste la igualdad, gana quien tuvo más aciertos de tendencia.</p>
           
           <p style={{ margin: '0.5rem 0 0.5rem', fontWeight: 700, color: '#f97316' }}>🥉 3º: Sorteo o moneda al aire</p>
-          <p style={{ margin: 0, fontSize: '0.92rem', color: '#475569' }}>Si la igualdad persiste en todo lo anterior, lo cual es rarísimo, que decida la suerte.</p>
+          <p style={{ margin: 0, fontSize: '0.92rem', color: 'var(--color-texto, #475569)' }}>Si la igualdad persiste en todo lo anterior, lo cual es rarísimo, que decida la suerte.</p>
         </div>
       ),
       target: 'Tabla de Posiciones',
@@ -724,8 +736,94 @@ export default function App() {
     setRefreshKey(k => k + 1)
   }, [])
 
+  const cambiarTema = (tema) => {
+    setTemaActual(tema)
+  }
+
+  const themeOptions = [
+    { key: 'default', label: 'Normal', icon: '◐' },
+    { key: 'colombia', label: 'Colombia', icon: '●' },
+  ]
+
   return (
     <div className="app-layout">
+      {view !== 'login' && view !== 'admin' && (
+        <div
+          className="theme-switcher"
+          aria-label="Selector de tema"
+          style={{
+            position: 'fixed',
+            top: '0.75rem',
+            right: '0.75rem',
+            zIndex: 9999,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.25rem',
+            padding: '0.25rem',
+            borderRadius: '999px',
+            background: temaActual === 'colombia' ? 'rgba(0, 20, 60, 0.92)' : 'rgba(255,255,255,0.86)',
+            border: temaActual === 'colombia' ? '1px solid rgba(252,209,22,0.28)' : '1px solid rgba(18,48,68,0.12)',
+            boxShadow: temaActual === 'colombia' ? '0 12px 30px rgba(0,0,0,0.28)' : '0 12px 30px rgba(18,48,68,0.12)',
+            backdropFilter: 'blur(14px)',
+          }}
+        >
+          {themeOptions.map(option => {
+            const active = temaActual === option.key
+            return (
+              <button
+                key={option.key}
+                type="button"
+                onClick={() => cambiarTema(option.key)}
+                aria-pressed={active}
+                style={{
+                  minHeight: '2rem',
+                  padding: '0.35rem 0.72rem',
+                  border: '1px solid transparent',
+                  borderRadius: '999px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.38rem',
+                  background: active
+                    ? option.key === 'colombia' ? '#FCD116' : '#102a43'
+                    : 'transparent',
+                  color: active
+                    ? option.key === 'colombia' ? '#0a1628' : '#ffffff'
+                    : temaActual === 'colombia' ? 'rgba(255,255,255,0.76)' : '#486581',
+                  fontFamily: 'inherit',
+                  fontSize: '0.78rem',
+                  fontWeight: 900,
+                  cursor: 'pointer',
+                  transition: 'background 0.18s ease, color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease',
+                  boxShadow: active ? '0 8px 18px rgba(0,0,0,0.16)' : 'none',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)' }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)' }}
+              >
+                <span style={{
+                  width: '0.75rem',
+                  height: '0.75rem',
+                  borderRadius: '50%',
+                  display: 'inline-grid',
+                  placeItems: 'center',
+                  background: option.key === 'colombia'
+                    ? 'linear-gradient(180deg, #FCD116 0 48%, #003893 48% 74%, #CE1126 74% 100%)'
+                    : active ? '#ffffff' : '#d9e2ec',
+                  color: 'transparent',
+                  boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.08)',
+                }}>
+                  {option.icon}
+                </span>
+                Tema {option.label}
+              </button>
+            )
+          })}
+        </div>
+      )}
+      {/* Decoraciones del tema Colombia */}
+      <div className="fondo-tema"></div>
+      <div className="decoracion-tema decoracion-izquierda"></div>
+      <div className="decoracion-tema decoracion-derecha"></div>
+      
       {view !== 'login' && (
         <Header
           currentUser={currentUser}
@@ -764,11 +862,12 @@ export default function App() {
           <Salas
             currentUser={currentUser}
             matches={matches}
+            theme={temaActual}
             key={refreshKey}
           />
         )}
         {view === 'eliminatorias' && currentUser && (
-          <Eliminatorias />
+          <Eliminatorias theme={temaActual} />
         )}
         {view === 'admin' && currentUser === 'Proyecto' && (
           <Admin
@@ -810,7 +909,7 @@ export default function App() {
             width: '100%',
             maxWidth: '38rem',
             borderRadius: '1.5rem',
-            background: '#fff',
+            background: 'var(--color-tarjeta, #fff)',
             overflow: 'hidden',
             boxShadow: '0 30px 90px rgba(15,23,42,0.35)',
             animation: 'slideUpModal 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
@@ -819,7 +918,7 @@ export default function App() {
             <div style={{
               padding: '2rem 2rem 1.5rem',
               background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-              color: '#fff',
+              color: 'var(--color-tarjeta, #fff)',
               borderBottom: '4px solid',
               borderImage: 'linear-gradient(to right, #00a651, #0066f5, #e11a27) 1',
               position: 'relative'
@@ -831,18 +930,18 @@ export default function App() {
               <div style={{ display: 'grid', gap: '1.5rem', minHeight: '18rem' }}>
                 <div key={guideStep} style={{ display: 'grid', gap: '1.25rem', animation: 'stepTransition 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}>
                   <div>
-                    <h3 style={{ margin: '0 0 0.5rem', fontSize: '1.2rem', fontWeight: 800, color: '#0f172a' }}>{guideSteps[guideStep].title}</h3>
+                    <h3 style={{ margin: '0 0 0.5rem', fontSize: '1.2rem', fontWeight: 800, color: 'var(--color-texto, #0f172a)' }}>{guideSteps[guideStep].title}</h3>
                     {typeof guideSteps[guideStep].description === 'string' ? (
-                      <p style={{ margin: 0, color: '#475569', lineHeight: 1.75, fontSize: '0.98rem' }}>{guideSteps[guideStep].description}</p>
+                      <p style={{ margin: 0, color: 'var(--color-texto, #475569)', lineHeight: 1.75, fontSize: '0.98rem' }}>{guideSteps[guideStep].description}</p>
                     ) : (
                       guideSteps[guideStep].description
                     )}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', padding: '1rem 1.25rem', borderRadius: '1rem', background: '#f1f5f9', border: '1px solid #e2e8f0' }}>
-                    <span style={{ width: '2.5rem', height: '2.5rem', borderRadius: '50%', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', color: '#fff', display: 'grid', placeItems: 'center', fontSize: '1.1rem', boxShadow: '0 4px 12px rgba(15,23,42,0.15)' }}>🔎</span>
+                    <span style={{ width: '2.5rem', height: '2.5rem', borderRadius: '50%', background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', color: 'var(--color-tarjeta, #fff)', display: 'grid', placeItems: 'center', fontSize: '1.1rem', boxShadow: '0 4px 12px rgba(15,23,42,0.15)' }}>🔎</span>
                     <div>
                       <p style={{ margin: 0, fontSize: '0.75rem', fontWeight: 900, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Señalando</p>
-                      <p style={{ margin: '0.15rem 0 0', color: '#0f172a', fontWeight: 800, fontSize: '0.95rem' }}>{guideSteps[guideStep].target}</p>
+                      <p style={{ margin: '0.15rem 0 0', color: 'var(--color-texto, #0f172a)', fontWeight: 800, fontSize: '0.95rem' }}>{guideSteps[guideStep].target}</p>
                     </div>
                   </div>
                 </div>
@@ -873,12 +972,12 @@ export default function App() {
                   onMouseEnter={e => { if (guideStep !== 0) { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 10px 22px rgba(15,23,42,0.12)'; e.currentTarget.style.background = '#f8fafc' } }}
                   onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; if (guideStep !== 0) e.currentTarget.style.background = '#fff' }}
                 >Anterior</button>
-                <button onClick={guideStep === guideSteps.length - 1 ? handleCloseGuide : handleNextGuide} style={{ flex: 1, padding: '0.95rem 1.1rem', border: 0, borderRadius: '0.95rem', background: '#0066f5', color: '#fff', fontWeight: 700, cursor: 'pointer', transition: 'transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease' }}
+                <button onClick={guideStep === guideSteps.length - 1 ? handleCloseGuide : handleNextGuide} style={{ flex: 1, padding: '0.95rem 1.1rem', border: 0, borderRadius: '0.95rem', background: 'var(--color-primario, #0066f5)', color: 'var(--color-tarjeta, #fff)', fontWeight: 700, cursor: 'pointer', transition: 'transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease' }}
                   onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 28px rgba(0,102,245,0.28)' }}
                   onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}
                 >{guideStep === guideSteps.length - 1 ? 'Listo, comenzar' : 'Siguiente'}</button>
               </div>
-              <button onClick={handleCloseGuide} style={{ marginTop: '0.85rem', width: '100%', padding: '0.85rem', border: 0, borderRadius: '0.95rem', background: 'transparent', color: '#475569', fontSize: '0.95rem', cursor: 'pointer', transition: 'transform 0.2s ease, color 0.2s ease' }}
+              <button onClick={handleCloseGuide} style={{ marginTop: '0.85rem', width: '100%', padding: '0.85rem', border: 0, borderRadius: '0.95rem', background: 'transparent', color: 'var(--color-texto, #475569)', fontSize: '0.95rem', cursor: 'pointer', transition: 'transform 0.2s ease, color 0.2s ease' }}
                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.color = '#0f172a' }}
                 onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.color = '#475569' }}
               >Cerrar guía</button>

@@ -12,7 +12,7 @@ export default function Pill({ children, small, variant = 'white', style = {}, .
     textTransform: 'uppercase',
     letterSpacing: '0.04em',
     boxShadow: '0 6px 18px rgba(2,6,23,0.06)',
-    background: '#fff',
+    background: 'var(--color-tarjeta, #fff)',
     color: 'var(--slate-800)',
     border: '1px solid rgba(2,6,23,0.04)',
     whiteSpace: 'nowrap',
