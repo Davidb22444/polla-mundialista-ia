@@ -9,7 +9,7 @@ import fondoAdminGlobal from '../assets/fondo_admin_global.webp'
 const equipos = data.equipos
 
 // ─── Chart (vanilla Chart.js) ───────────────────────────────────
-function PointsChart({ users, matches }) {
+function PointsChart({ users = [], matches = [] }) {
   const canvasRef = useRef(null)
   const chartRef = useRef(null)
 
@@ -57,7 +57,7 @@ function PointsChart({ users, matches }) {
 }
 
 // ─── Match result row ────────────────────────────────────────────
-function MatchRow({ match, users, onPublish }) {
+function MatchRow({ match, users = [], onPublish }) {
   const [localVal, setLocalVal] = useState(match.resLocal !== null ? String(match.resLocal) : '')
   const [visitorVal, setVisitorVal] = useState(match.resVisitor !== null ? String(match.resVisitor) : '')
 
@@ -137,7 +137,7 @@ function MatchRow({ match, users, onPublish }) {
             Desglose de Puntos
           </h4>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '0.5rem' }}>
-            {users.filter(u => u.bets[match.id]).map(user => {
+            {users.filter(u => u.bets?.[match.id]).map(user => {
               const bet = user.bets[match.id]
               const pts = calculateMatchPoints(bet.local, bet.visitor, match.resLocal, match.resVisitor)
               const style = pts === 3
@@ -156,7 +156,7 @@ function MatchRow({ match, users, onPublish }) {
                 </div>
               )
             })}
-            {users.filter(u => u.bets[match.id]).length === 0 && (
+            {users.filter(u => u.bets?.[match.id]).length === 0 && (
               <p style={{ fontSize: '0.75rem', color: 'var(--slate-400)', gridColumn: '1/-1' }}>Aún no hay apuestas para este partido.</p>
             )}
           </div>
@@ -176,7 +176,7 @@ function TeamBadge({ team }) {
 }
 
 // ─── Admin Page ──────────────────────────────────────────────────
-export default function Admin({ matches, users, onMatchesChange }) {
+export default function Admin({ matches = [], users = [], onMatchesChange }) {
   const handlePublish = async (matchId, lv, vv) => {
     try {
       const updatedMatch = await MatchesApi.simulateMatch(matchId, {
@@ -201,7 +201,7 @@ export default function Admin({ matches, users, onMatchesChange }) {
   }
 
   const finishedCount = matches.filter(m => m.resLocal !== null).length
-  const totalBets = users.reduce((sum, u) => sum + Object.keys(u.bets).length, 0)
+  const totalBets = users.reduce((sum, u) => sum + Object.keys(u.bets || {}).length, 0)
 
   // ── Admin panel ──────────────────────────────────────────────
   return (

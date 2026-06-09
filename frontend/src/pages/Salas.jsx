@@ -35,7 +35,7 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
     e.preventDefault()
     const name = newRoomName.trim()
     if (!name) {
-      showToast('Por favor escribe un nombre para la sala', '⚠️')
+      showToast('Por favor escribe un nombre para la sala', '️')
       return
     }
     try {
@@ -93,10 +93,9 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
   const memberNames = selectedRoom ? selectedRoom.members : []
   const roomUsers = users.filter(u => memberNames.includes(u.name))
   const roomStandings = buildStandings(roomUsers, matches)
-
   const myRooms = rooms.filter(r => r.members.includes(currentUser))
 
-  // Colombia theme palette (used for the UI you requested)
+  // Colombia theme palette
   const col = {
     cardBg: 'linear-gradient(135deg, rgba(0,20,60,0.78) 0%, rgba(0,28,75,0.62) 100%)',
     cardBorder: '1px solid rgba(255,255,255,0.12)',
@@ -105,10 +104,23 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
     subText: 'rgba(255,255,255,0.70)',
     inputBg: 'rgba(0,20,60,0.55)',
     inputBorder: '1.5px solid rgba(255,255,255,0.12)',
-    inputText: 'var(--color-tarjeta, #fff)',
+    inputText: '#ffffff',
     label: 'rgba(255,255,255,0.72)',
     actionBg: 'rgba(0,102,245,0.92)',
     actionHover: 'rgba(0,102,245,1)',
+    panelBg: 'rgba(0,20,60,0.88)',
+    panelBorder: '1px solid rgba(252,209,22,0.24)',
+    matchCardBg: 'rgba(0,20,60,0.65)',
+    matchCardBorder: '1px solid rgba(255,255,255,0.12)',
+    tabActiveBg: '#FCD116',
+    tabActiveText: '#0a1628',
+    tabInactiveBg: 'transparent',
+    tabInactiveText: 'rgba(255,255,255,0.8)',
+    tableBg: 'rgba(0,20,60,0.78)',
+    tableHeaderBg: 'rgba(0,20,60,0.96)',
+    tableRowBg: 'rgba(0,20,60,0.65)',
+    tableRowHover: 'rgba(0,56,147,0.74)',
+    tableBorder: 'rgba(252,209,22,0.14)',
   }
 
   const themeIsColombia = theme === 'colombia'
@@ -122,11 +134,9 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
   }
 
   const renderTopCards = () => {
-    // Shared styles (normal + Colombia)
     const normalCardBg = 'linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.96) 100%)'
     const normalCardBorder = '1px solid rgba(255,255,255,0.92)'
     const normalCardShadow = '0 24px 52px rgba(16,42,67,0.16)'
-
     const labelColor = themeIsColombia ? col.label : 'var(--slate-500)'
     const titleColor = themeIsColombia ? col.text : 'var(--slate-900)'
     const subTitleColor = themeIsColombia ? col.subText : 'var(--slate-500)'
@@ -371,7 +381,7 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
                         {isAdmin ? 'Administrador' : 'Miembro'}
                       </span>
                       <span style={{ fontSize: '0.78rem', color: themeIsColombia ? 'rgba(255,255,255,0.70)' : 'var(--slate-400)', fontWeight: 700 }}>
-                        👤 {room.members.length} miembros
+                         {room.members.length} miembros
                       </span>
                     </div>
                     <h4 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.2rem', fontWeight: 800, margin: 0, color: themeIsColombia ? 'rgba(255,255,255,0.92)' : 'var(--slate-800)' }}>
@@ -423,9 +433,9 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
             <button
               onClick={() => setSelectedRoom(null)}
               style={{
-                background: themeIsColombia ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.94)',
-                border: themeIsColombia ? '1px solid rgba(255,255,255,0.15)' : '1px solid rgba(15,23,42,0.08)',
-                color: themeIsColombia ? 'var(--color-tarjeta, #fff)' : 'var(--slate-700)',
+                background: themeIsColombia ? 'rgba(0,20,60,0.88)' : 'rgba(255,255,255,0.94)',
+                border: themeIsColombia ? '1px solid rgba(252,209,22,0.24)' : '1px solid rgba(15,23,42,0.08)',
+                color: themeIsColombia ? '#ffffff' : 'var(--slate-700)',
                 padding: '0.6rem 1.2rem',
                 borderRadius: '999px',
                 cursor: 'pointer',
@@ -438,18 +448,19 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
                 transition: 'all 0.2s',
                 backdropFilter: 'blur(8px)',
               }}
-              onMouseEnter={e => (e.currentTarget.style.background = themeIsColombia ? 'rgba(255,255,255,0.2)' : '#fff')}
-              onMouseLeave={e => (e.currentTarget.style.background = themeIsColombia ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.94)')}
+              onMouseEnter={e => (e.currentTarget.style.background = themeIsColombia ? 'rgba(0,20,60,0.95)' : '#fff')}
+              onMouseLeave={e => (e.currentTarget.style.background = themeIsColombia ? 'rgba(0,20,60,0.88)' : 'rgba(255,255,255,0.94)')}
             >
               ← Volver a mis salas
             </button>
 
+            {/* Panel principal de información de la sala */}
             <div style={{
-              background: themeIsColombia ? 'linear-gradient(135deg, rgba(15,23,42,0.9) 0%, rgba(30,41,59,0.85) 100%)' : 'rgba(255,255,255,0.97)',
-              border: themeIsColombia ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(255,255,255,0.9)',
+              background: themeIsColombia ? col.panelBg : 'rgba(255,255,255,0.97)',
+              border: themeIsColombia ? col.panelBorder : '1px solid rgba(255,255,255,0.9)',
               borderRadius: '1.5rem',
               padding: '2rem',
-              boxShadow: themeIsColombia ? '0 20px 40px rgba(0,0,0,0.3)' : '0 24px 55px rgba(16,42,67,0.18)',
+              boxShadow: themeIsColombia ? col.cardShadow : '0 24px 55px rgba(16,42,67,0.18)',
               backdropFilter: 'blur(16px)',
               marginBottom: '2rem',
               display: 'flex',
@@ -486,17 +497,17 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
                     </span>
                   )}
                 </div>
-                <h1 style={{ fontFamily: 'Syne, sans-serif', fontSize: '2.2rem', fontWeight: 800, margin: 0, color: themeIsColombia ? 'var(--color-tarjeta, #fff)' : 'var(--slate-900)' }}>
+                <h1 style={{ fontFamily: 'Syne, sans-serif', fontSize: '2.2rem', fontWeight: 800, margin: 0, color: themeIsColombia ? col.text : 'var(--slate-900)' }}>
                   {selectedRoom.name}
                 </h1>
-                <p style={{ color: themeIsColombia ? 'rgba(255,255,255,0.6)' : 'var(--slate-500)', fontSize: '0.875rem', marginTop: '0.35rem' }}>
+                <p style={{ color: themeIsColombia ? col.subText : 'var(--slate-500)', fontSize: '0.875rem', marginTop: '0.35rem' }}>
                   Creado por <strong>{selectedRoom.creator}</strong> · {selectedRoom.members.length} miembros unidos
                 </p>
               </div>
 
               <div style={{
-                background: themeIsColombia ? 'rgba(255,255,255,0.05)' : '#f8fafc',
-                border: themeIsColombia ? '1px solid rgba(255,255,255,0.1)' : '1px solid var(--slate-200)',
+                background: themeIsColombia ? 'rgba(0,20,60,0.55)' : '#f8fafc',
+                border: themeIsColombia ? '1px solid rgba(252,209,22,0.24)' : '1px solid var(--slate-200)',
                 padding: '1rem 1.5rem',
                 borderRadius: '1.25rem',
                 textAlign: 'center',
@@ -505,7 +516,7 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
                 <span style={{
                   fontSize: '0.72rem',
                   fontWeight: 900,
-                  color: themeIsColombia ? 'rgba(255,255,255,0.5)' : 'var(--slate-500)',
+                  color: themeIsColombia ? col.subText : 'var(--slate-500)',
                   textTransform: 'uppercase',
                   display: 'block',
                   marginBottom: '0.4rem',
@@ -518,7 +529,7 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
                     fontFamily: 'monospace',
                     fontSize: '1.75rem',
                     fontWeight: 900,
-                    color: '#00a651',
+                    color: themeIsColombia ? '#FCD116' : '#00a651',
                     letterSpacing: '0.1em'
                   }}>
                     {selectedRoom.code}
@@ -526,7 +537,7 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
                   <button
                     onClick={() => handleCopyCode(selectedRoom.code)}
                     style={{
-                      background: copied ? '#00a651' : themeIsColombia ? 'rgba(255,255,255,0.1)' : '#0066f5',
+                      background: copied ? '#00a651' : themeIsColombia ? 'rgba(0,102,245,0.92)' : '#0066f5',
                       border: 0,
                       color: 'var(--color-tarjeta, #fff)',
                       padding: '0.5rem 0.85rem',
@@ -543,22 +554,23 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
               </div>
             </div>
 
+            {/* Tabs de navegación */}
             <div style={{
               display: 'flex',
               gap: '0.5rem',
-              background: themeIsColombia ? 'rgba(15,23,42,0.3)' : 'rgba(255,255,255,0.94)',
+              background: themeIsColombia ? 'rgba(0,20,60,0.7)' : 'rgba(255,255,255,0.94)',
               padding: '0.35rem',
               borderRadius: '0.95rem',
-              border: themeIsColombia ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(15,23,42,0.08)',
+              border: themeIsColombia ? '1px solid rgba(252,209,22,0.24)' : '1px solid rgba(15,23,42,0.08)',
               marginBottom: '1.5rem',
               maxWidth: 'fit-content',
-              boxShadow: themeIsColombia ? 'none' : '0 14px 30px rgba(16,42,67,0.12)'
+              boxShadow: themeIsColombia ? '0 10px 30px rgba(0,0,0,0.25)' : '0 14px 30px rgba(16,42,67,0.12)'
             }}>
               <button
                 onClick={() => setSubTab('ranking')}
                 style={{
-                  background: subTab === 'ranking' ? (themeIsColombia ? '#fff' : '#0066f5') : 'transparent',
-                  color: subTab === 'ranking' ? (themeIsColombia ? '#0f172a' : '#fff') : (themeIsColombia ? 'rgba(255,255,255,0.8)' : 'var(--slate-600)'),
+                  background: subTab === 'ranking' ? (themeIsColombia ? col.tabActiveBg : '#0066f5') : 'transparent',
+                  color: subTab === 'ranking' ? (themeIsColombia ? col.tabActiveText : '#fff') : (themeIsColombia ? col.tabInactiveText : 'var(--slate-600)'),
                   border: 0,
                   padding: '0.6rem 1.2rem',
                   borderRadius: '0.7rem',
@@ -573,8 +585,8 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
               <button
                 onClick={() => setSubTab('pronosticos')}
                 style={{
-                  background: subTab === 'pronosticos' ? (themeIsColombia ? '#fff' : '#0066f5') : 'transparent',
-                  color: subTab === 'pronosticos' ? (themeIsColombia ? '#0f172a' : '#fff') : (themeIsColombia ? 'rgba(255,255,255,0.8)' : 'var(--slate-600)'),
+                  background: subTab === 'pronosticos' ? (themeIsColombia ? col.tabActiveBg : '#0066f5') : 'transparent',
+                  color: subTab === 'pronosticos' ? (themeIsColombia ? col.tabActiveText : '#fff') : (themeIsColombia ? col.tabInactiveText : 'var(--slate-600)'),
                   border: 0,
                   padding: '0.6rem 1.2rem',
                   borderRadius: '0.7rem',
@@ -584,24 +596,24 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
                   transition: 'all 0.2s'
                 }}
               >
-                ⚽ Comparar Apuestas
+                 Comparar Apuestas
               </button>
             </div>
 
             {subTab === 'ranking' && (
               <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem' }} className="animate-fade-in">
                 <div style={{
-                  background: 'rgba(255,255,255,0.96)',
+                  background: themeIsColombia ? col.tableBg : 'rgba(255,255,255,0.96)',
                   borderRadius: '1.5rem',
-                  boxShadow: '0 20px 45px rgba(0,0,0,0.15)',
+                  boxShadow: themeIsColombia ? col.cardShadow : '0 20px 45px rgba(0,0,0,0.15)',
                   overflow: 'hidden',
-                  border: '1px solid rgba(255,255,255,0.8)'
+                  border: themeIsColombia ? col.panelBorder : '1px solid rgba(255,255,255,0.8)'
                 }}>
                   <div style={{ padding: '1.5rem 1.5rem 0.5rem' }}>
-                    <h3 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.25rem', fontWeight: 800, margin: 0, color: 'var(--color-texto, #0f172a)' }}>
+                    <h3 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.25rem', fontWeight: 800, margin: 0, color: themeIsColombia ? col.text : 'var(--color-texto, #0f172a)' }}>
                       Tabla de Clasificación Exclusiva
                     </h3>
-                    <p style={{ color: 'var(--slate-500)', fontSize: '0.85rem', marginTop: '0.2rem' }}>
+                    <p style={{ color: themeIsColombia ? col.subText : 'var(--slate-500)', fontSize: '0.85rem', marginTop: '0.2rem' }}>
                       Solo los miembros de esta sala aparecen en esta tabla.
                     </p>
                   </div>
@@ -609,12 +621,12 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
                   <div style={{ overflowX: 'auto' }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                       <thead>
-                        <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-                          <th style={{ padding: '1rem 1.5rem', fontSize: '0.72rem', fontWeight: 900, color: 'var(--slate-500)', textTransform: 'uppercase', textAlign: 'left', width: '4rem' }}>#</th>
-                          <th style={{ padding: '1rem 1.5rem', fontSize: '0.72rem', fontWeight: 900, color: 'var(--slate-500)', textTransform: 'uppercase', textAlign: 'left' }}>Jugador</th>
-                          <th style={{ padding: '1rem 1.5rem', fontSize: '0.72rem', fontWeight: 900, color: 'var(--slate-500)', textTransform: 'uppercase', textAlign: 'center' }}>Apuestas</th>
-                          <th style={{ padding: '1rem 1.5rem', fontSize: '0.72rem', fontWeight: 900, color: 'var(--slate-500)', textTransform: 'uppercase', textAlign: 'center' }}>Marcador Exacto</th>
-                          <th style={{ padding: '1rem 1.5rem', fontSize: '0.72rem', fontWeight: 900, color: 'var(--slate-500)', textTransform: 'uppercase', textAlign: 'center', width: '6rem' }}>Puntos</th>
+                        <tr style={{ background: themeIsColombia ? col.tableHeaderBg : '#f8fafc', borderBottom: themeIsColombia ? `1px solid ${col.tableBorder}` : '1px solid #e2e8f0' }}>
+                          <th style={{ padding: '1rem 1.5rem', fontSize: '0.72rem', fontWeight: 900, color: themeIsColombia ? col.subText : 'var(--slate-500)', textTransform: 'uppercase', textAlign: 'left', width: '4rem' }}>#</th>
+                          <th style={{ padding: '1rem 1.5rem', fontSize: '0.72rem', fontWeight: 900, color: themeIsColombia ? col.subText : 'var(--slate-500)', textTransform: 'uppercase', textAlign: 'left' }}>Jugador</th>
+                          <th style={{ padding: '1rem 1.5rem', fontSize: '0.72rem', fontWeight: 900, color: themeIsColombia ? col.subText : 'var(--slate-500)', textTransform: 'uppercase', textAlign: 'center' }}>Apuestas</th>
+                          <th style={{ padding: '1rem 1.5rem', fontSize: '0.72rem', fontWeight: 900, color: themeIsColombia ? col.subText : 'var(--slate-500)', textTransform: 'uppercase', textAlign: 'center' }}>Marcador Exacto</th>
+                          <th style={{ padding: '1rem 1.5rem', fontSize: '0.72rem', fontWeight: 900, color: themeIsColombia ? col.subText : 'var(--slate-500)', textTransform: 'uppercase', textAlign: 'center', width: '6rem' }}>Puntos</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -623,8 +635,8 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
                           const color = getAvatarColor(player.name)
                           return (
                             <tr key={player.name} style={{
-                              background: isMe ? 'rgba(0,166,81,0.05)' : 'transparent',
-                              borderBottom: '1px solid #f1f5f9',
+                              background: isMe ? (themeIsColombia ? 'rgba(0,56,147,0.64)' : 'rgba(0,166,81,0.05)') : (themeIsColombia ? col.tableRowBg : 'transparent'),
+                              borderBottom: themeIsColombia ? `1px solid ${col.tableBorder}` : '1px solid #f1f5f9',
                               transition: 'background 0.2s'
                             }}>
                               <td style={{ padding: '1rem 1.5rem' }}>
@@ -638,10 +650,10 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
                                     width: '1.75rem',
                                     height: '1.75rem',
                                     borderRadius: '50%',
-                                    background: '#f1f5f9',
+                                    background: themeIsColombia ? 'rgba(255,255,255,0.08)' : '#f1f5f9',
                                     fontSize: '0.75rem',
                                     fontWeight: 700,
-                                    color: 'var(--slate-600)'
+                                    color: themeIsColombia ? col.text : 'var(--slate-600)'
                                   }}>{idx + 1}</span>
                                 )}
                               </td>
@@ -662,17 +674,17 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
                                     {player.name[0].toUpperCase()}
                                   </div>
                                   <div>
-                                    <span style={{ fontWeight: 700, color: 'var(--slate-800)', fontSize: '0.95rem' }}>{player.name}</span>
-                                    {isMe && <span style={{ marginLeft: '0.5rem', fontSize: '0.68rem', fontWeight: 900, color: '#00a651', background: 'rgba(0,166,81,0.1)', padding: '0.15rem 0.45rem', borderRadius: '999px', textTransform: 'uppercase' }}>Tú</span>}
+                                    <span style={{ fontWeight: 700, color: themeIsColombia ? col.text : 'var(--slate-800)', fontSize: '0.95rem' }}>{player.name}</span>
+                                    {isMe && <span style={{ marginLeft: '0.5rem', fontSize: '0.68rem', fontWeight: 900, color: themeIsColombia ? '#FCD116' : '#00a651', background: themeIsColombia ? 'rgba(252,209,22,0.15)' : 'rgba(0,166,81,0.1)', padding: '0.15rem 0.45rem', borderRadius: '999px', textTransform: 'uppercase' }}>Tú</span>}
                                   </div>
                                 </div>
                               </td>
-                              <td style={{ padding: '1rem 1.5rem', textAlign: 'center', fontWeight: 600, color: 'var(--slate-600)' }}>{player.betsMade}</td>
-                              <td style={{ padding: '1rem 1.5rem', textAlign: 'center', fontWeight: 700, color: '#f39c12' }}>{player.exactScores} 🎯</td>
+                              <td style={{ padding: '1rem 1.5rem', textAlign: 'center', fontWeight: 600, color: themeIsColombia ? col.text : 'var(--slate-600)' }}>{player.betsMade}</td>
+                              <td style={{ padding: '1rem 1.5rem', textAlign: 'center', fontWeight: 700, color: themeIsColombia ? '#FCD116' : '#f39c12' }}>{player.exactScores} 🎯</td>
                               <td style={{ padding: '1rem 1.5rem', textAlign: 'center' }}>
                                 <span style={{
-                                  background: 'rgba(0,102,245,0.1)',
-                                  color: 'var(--color-primario, #0066f5)',
+                                  background: themeIsColombia ? 'rgba(0,102,245,0.92)' : 'rgba(0,102,245,0.1)',
+                                  color: '#ffffff',
                                   fontWeight: 900,
                                   fontSize: '0.85rem',
                                   padding: '0.3rem 0.8rem',
@@ -693,17 +705,18 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
 
             {subTab === 'pronosticos' && (
               <div style={{ display: 'grid', gap: '1.5rem' }} className="animate-fade-in">
+                {/* Panel de deportividad */}
                 <div style={{
-                  background: themeIsColombia ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.97)',
-                  border: themeIsColombia ? '1px solid rgba(255,255,255,0.15)' : '1px solid rgba(255,255,255,0.9)',
+                  background: themeIsColombia ? col.panelBg : 'rgba(255,255,255,0.97)',
+                  border: themeIsColombia ? col.panelBorder : '1px solid rgba(255,255,255,0.9)',
                   borderRadius: '1rem',
                   padding: '1.25rem',
-                  color: themeIsColombia ? 'var(--color-tarjeta, #fff)' : 'var(--slate-900)',
+                  color: themeIsColombia ? col.text : 'var(--slate-900)',
                   backdropFilter: 'blur(8px)',
-                  boxShadow: themeIsColombia ? 'none' : '0 14px 30px rgba(16,42,67,0.12)'
+                  boxShadow: themeIsColombia ? col.cardShadow : '0 14px 30px rgba(16,42,67,0.12)'
                 }}>
                   <h4 style={{ margin: '0 0 0.25rem', fontSize: '1rem', fontWeight: 800 }}>Deportividad ante todo</h4>
-                  <p style={{ margin: 0, fontSize: '0.85rem', color: themeIsColombia ? 'rgba(255,255,255,0.75)' : 'var(--slate-500)', lineHeight: 1.5 }}>
+                  <p style={{ margin: 0, fontSize: '0.85rem', color: themeIsColombia ? col.subText : 'var(--slate-500)', lineHeight: 1.5 }}>
                     Las apuestas de tus amigos solo se revelarán una vez que el partido haya **comenzado o finalizado** (simulado/finalizado) para evitar copias. ¡Sé el mejor estratega!
                   </p>
                 </div>
@@ -718,21 +731,21 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
 
                     return (
                       <div key={match.id} style={{
-                        background: 'var(--color-tarjeta, #fff)',
+                        background: themeIsColombia ? col.matchCardBg : 'var(--color-tarjeta, #fff)',
                         borderRadius: '1.25rem',
                         padding: '1.25rem',
-                        boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
-                        border: '1px solid rgba(0,0,0,0.04)',
+                        boxShadow: themeIsColombia ? '0 10px 30px rgba(0,0,0,0.25)' : '0 10px 30px rgba(0,0,0,0.08)',
+                        border: themeIsColombia ? col.matchCardBorder : '1px solid rgba(0,0,0,0.04)',
                         display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'space-between'
                       }}>
                         <div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: 'var(--slate-400)', fontWeight: 800, marginBottom: '0.75rem' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: themeIsColombia ? col.subText : 'var(--slate-400)', fontWeight: 800, marginBottom: '0.75rem' }}>
                             <span>{match.fecha}</span>
                             <span style={{
-                              color: hasResult ? '#0066f5' : '#f39c12',
-                              background: hasResult ? 'rgba(0,102,245,0.08)' : 'rgba(243,156,18,0.08)',
+                              color: hasResult ? (themeIsColombia ? '#4ade80' : '#0066f5') : (themeIsColombia ? '#FCD116' : '#f39c12'),
+                              background: hasResult ? (themeIsColombia ? 'rgba(74,222,128,0.15)' : 'rgba(0,102,245,0.08)') : (themeIsColombia ? 'rgba(252,209,22,0.15)' : 'rgba(243,156,18,0.08)'),
                               padding: '0.15rem 0.45rem',
                               borderRadius: '0.4rem',
                               textTransform: 'uppercase'
@@ -741,17 +754,17 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
                             </span>
                           </div>
 
-                          <div style={{ display: 'flex', alignItems: 'center', justifyItems: 'center', gap: '0.75rem', marginBottom: '1rem', background: '#f8fafc', padding: '0.75rem', borderRadius: '0.85rem' }}>
-                            <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '0.45rem', justifyContent: 'flex-end', fontWeight: 800, fontSize: '0.85rem', color: 'var(--slate-800)' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyItems: 'center', gap: '0.75rem', marginBottom: '1rem', background: themeIsColombia ? 'rgba(0,20,60,0.55)' : '#f8fafc', padding: '0.75rem', borderRadius: '0.85rem' }}>
+                            <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '0.45rem', justifyContent: 'flex-end', fontWeight: 800, fontSize: '0.85rem', color: themeIsColombia ? col.text : 'var(--slate-800)' }}>
                               <span>{match.local}</span>
                               <TeamFlag code={data.equipos[match.local]?.code} name={match.local} style={{ width: '1.3rem', height: '1.3rem', borderRadius: '50%' }} />
                             </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontWeight: 900, color: 'var(--slate-900)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontWeight: 900, color: themeIsColombia ? col.text : 'var(--slate-900)' }}>
                               <span>{hasResult ? match.resLocal : '-'}</span>
-                              <span style={{ color: 'var(--slate-300)' }}>:</span>
+                              <span style={{ color: themeIsColombia ? 'rgba(255,255,255,0.4)' : 'var(--slate-300)' }}>:</span>
                               <span>{hasResult ? match.resVisitor : '-'}</span>
                             </div>
-                            <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '0.45rem', justifyContent: 'flex-start', fontWeight: 800, fontSize: '0.85rem', color: 'var(--slate-800)' }}>
+                            <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '0.45rem', justifyContent: 'flex-start', fontWeight: 800, fontSize: '0.85rem', color: themeIsColombia ? col.text : 'var(--slate-800)' }}>
                               <TeamFlag code={data.equipos[match.visitante]?.code} name={match.visitante} style={{ width: '1.3rem', height: '1.3rem', borderRadius: '50%' }} />
                               <span>{match.visitante}</span>
                             </div>
@@ -759,13 +772,13 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
                         </div>
 
                         <div>
-                          <span style={{ fontSize: '0.72rem', fontWeight: 900, color: 'var(--slate-400)', textTransform: 'uppercase', display: 'block', marginBottom: '0.5rem', letterSpacing: '0.05em' }}>
+                          <span style={{ fontSize: '0.72rem', fontWeight: 900, color: themeIsColombia ? col.subText : 'var(--slate-400)', textTransform: 'uppercase', display: 'block', marginBottom: '0.5rem', letterSpacing: '0.05em' }}>
                             Pronósticos del grupo ({matchBets.length})
                           </span>
 
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                             {matchBets.length === 0 ? (
-                              <span style={{ fontSize: '0.78rem', color: 'var(--slate-400)', fontStyle: 'italic' }}>Ningún amigo ha apostado aún.</span>
+                              <span style={{ fontSize: '0.78rem', color: themeIsColombia ? col.subText : 'var(--slate-400)', fontStyle: 'italic' }}>Ningún amigo ha apostado aún.</span>
                             ) : (
                               matchBets.map(mb => {
                                 const isMe = mb.username === currentUser
@@ -789,8 +802,8 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
                                     justifyContent: 'space-between',
                                     padding: '0.45rem 0.65rem',
                                     borderRadius: '0.65rem',
-                                    background: isMe ? 'rgba(0,166,81,0.04)' : '#f8fafc',
-                                    border: isMe ? '1px solid rgba(0,166,81,0.15)' : '1px solid #f1f5f9'
+                                    background: isMe ? (themeIsColombia ? 'rgba(0,56,147,0.64)' : 'rgba(0,166,81,0.04)') : (themeIsColombia ? 'rgba(0,20,60,0.55)' : '#f8fafc'),
+                                    border: isMe ? (themeIsColombia ? '1px solid rgba(252,209,22,0.24)' : '1px solid rgba(0,166,81,0.15)') : (themeIsColombia ? '1px solid rgba(255,255,255,0.12)' : '1px solid #f1f5f9')
                                   }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                       <div style={{
@@ -806,7 +819,7 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
                                       }}>
                                         {mb.username[0].toUpperCase()}
                                       </div>
-                                      <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--slate-700)' }}>
+                                      <span style={{ fontSize: '0.8rem', fontWeight: 700, color: themeIsColombia ? col.text : 'var(--slate-700)' }}>
                                         {mb.username} {isMe && '(Tú)'}
                                       </span>
                                     </div>
@@ -815,7 +828,7 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
                                       <span style={{
                                         fontSize: '0.85rem',
                                         fontWeight: 900,
-                                        color: showPrediction ? 'var(--slate-800)' : 'var(--slate-400)',
+                                        color: showPrediction ? (themeIsColombia ? col.text : 'var(--slate-800)') : (themeIsColombia ? 'rgba(255,255,255,0.4)' : 'var(--slate-400)'),
                                         fontFamily: showPrediction ? 'monospace' : 'inherit'
                                       }}>
                                         {showPrediction ? `${mb.bet.local} - ${mb.bet.visitor}` : '🔒 Oculto'}
@@ -823,8 +836,8 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
 
                                       {hasResult && scorePoints !== null && (
                                         <span style={{
-                                          background: scorePoints === 3 ? '#e8f8f0' : scorePoints > 0 ? '#e3f2fd' : '#ffebee',
-                                          color: scorePoints === 3 ? '#2e7d32' : scorePoints > 0 ? '#1565c0' : '#c62828',
+                                          background: scorePoints === 3 ? (themeIsColombia ? 'rgba(74,222,128,0.2)' : '#e8f8f0') : scorePoints > 0 ? (themeIsColombia ? 'rgba(0,102,245,0.2)' : '#e3f2fd') : (themeIsColombia ? 'rgba(225,26,39,0.2)' : '#ffebee'),
+                                          color: scorePoints === 3 ? (themeIsColombia ? '#4ade80' : '#2e7d32') : scorePoints > 0 ? (themeIsColombia ? '#60a5fa' : '#1565c0') : (themeIsColombia ? '#fb7185' : '#c62828'),
                                           fontWeight: 900,
                                           fontSize: '0.68rem',
                                           padding: '0.15rem 0.4rem',
@@ -880,7 +893,7 @@ export default function Salas({ currentUser, currentSession, matches, theme, use
           <div className="animate-fade-in">
             <div style={{ marginBottom: '2.5rem' }}>
               <h2 style={{ fontFamily: 'Syne, sans-serif', fontSize: '2.25rem', fontWeight: 800, margin: 0, color: 'var(--color-tarjeta, #fff)', textShadow: '0 2px 12px rgba(0,0,0,0.5)' }}>
-                Salas de <span style={{ color: '#00a651' }}>Juego</span>
+                Salas de <span style={{ color: themeIsColombia ? '#FCD116' : '#00a651' }}>Juego</span>
               </h2>
               <p style={{ color: 'rgba(255,255,255,0.72)', fontSize: '0.95rem', marginTop: '0.35rem' }}>
                 Crea una sala privada para competir exclusivamente con tus amigos o únete a una existente usando un código de invitación.

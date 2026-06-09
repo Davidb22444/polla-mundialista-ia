@@ -75,13 +75,19 @@ export default function Inicio({ onLogin }) {
         triggerError('Contraseña incorrecta')
         return
       }
+      // Restringido: Admin se habilita con currentUser === 'Proyecto'
+      // En esta app este usuario vive en sesión como si fuera un usuario normal,
+      // por eso forzamos onLogin con nombre exacto 'Proyecto'.
       onLogin('Proyecto', true)
       return
     }
 
+
+
     try {
       await AuthApi.signIn(trimmed, password)
       onLogin(trimmed)
+
     } catch (err) {
       console.error(err)
       triggerError('Usuario o contraseña incorrectos. ¿Ya tienes cuenta?')

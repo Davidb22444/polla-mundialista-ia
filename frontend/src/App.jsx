@@ -80,7 +80,7 @@ function Toast() {
   )
 }
 
-// ─── Global Stats ──────────────────────────────────────────────
+// ── Global Stats ──────────────────────────────────────────────
 export function getGlobalStats(users, matches) {
   const playedMatches = matches.filter(m => m.resLocal !== null && m.resVisitor !== null)
   const stats = {}
@@ -118,13 +118,13 @@ export function getGlobalStats(users, matches) {
 
 const ACHIEVEMENTS = [
   { id: 'iniciado', label: 'Iniciado', icon: '🎯', desc: 'Primera apuesta', check: (s) => s.betsMade >= 1 },
-  { id: 'veterano', label: 'Veterano', icon: '🏅', desc: '10+ apuestas', check: (s) => s.betsMade >= 10 },
+  { id: 'veterano', label: 'Veterano', icon: '', desc: '10+ apuestas', check: (s) => s.betsMade >= 10 },
   { id: 'adivino', label: 'Adivino', icon: '🔮', desc: '3+ marcadores exactos', check: (s) => s.exactScores >= 3 },
   { id: 'hattrick', label: 'Hat-trick', icon: '🎩', desc: 'Racha de 3 aciertos', check: (s) => s.maxStreak >= 3 },
   { id: 'oraculo', label: 'Oráculo', icon: '⚡', desc: '5+ marcadores exactos', check: (s) => s.exactScores >= 5 },
 ]
 
-// ─── Standings logic ────────────────────────────────────────────
+// ─── Standings logic ───────────────────────────────────────────
 export function buildStandings(users, matches) {
   const tournamentChampion = ''
   return users.map(user => {
@@ -170,7 +170,6 @@ function Tabla({ currentUser, matches, users, refreshKey: _refreshKey }) {
   const podiumHeights = ['8rem', '10rem', '6rem']
   const podiumLabels = ['2°', '1°', '3°']
   const [selectedPlayer, setSelectedPlayer] = useState(null)
-
   return (
     <div style={{
       position: 'relative', minHeight: '100vh',
@@ -182,11 +181,10 @@ function Tabla({ currentUser, matches, users, refreshKey: _refreshKey }) {
       <div style={{ position: 'relative', zIndex: 1, maxWidth: '64rem', margin: '0 auto', padding: '6rem 1rem 3rem' }}>
         <div style={{ marginBottom: '2rem' }}>
           <h2 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1.875rem', fontWeight: 800, margin: 0 }}>
-            Tabla de <span style={{ color: '#e11a27' }}>Posiciones</span>
+            Tabla de <span style={{ color: 'var(--slate-500)' }}>Posiciones</span>
           </h2>
           <p style={{ color: 'var(--slate-500)', fontSize: '0.875rem', marginTop: '0.25rem' }}>Haz clic en un jugador para ver su historial y gráfica de puntos.</p>
         </div>
-
         {top3.length > 0 && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '1rem', marginBottom: '2rem' }}>
             {podiumOrder.map((player, idx) => !player ? <div key={idx} /> : (
@@ -226,12 +224,12 @@ function Tabla({ currentUser, matches, users, refreshKey: _refreshKey }) {
                       key={player.name}
                       onClick={() => setSelectedPlayer(player)}
                       className={isMe ? 'standings-row standings-row-me' : 'standings-row'}
-                      style={{ background: isMe ? 'rgba(16,185,129,0.04)' : 'transparent', borderBottom: '1px solid var(--slate-100)', transition: 'background 0.15s', cursor: 'pointer' }}
+                      style={{ background: isMe ? 'rgba(16,185,129, 0.04)' : 'transparent', borderBottom: '1px solid var(--slate-100)', transition: 'background 0.15s', cursor: 'pointer' }}
                       onMouseEnter={e => e.currentTarget.style.background = isMe ? 'rgba(16,185,129,0.08)' : 'rgba(0,0,0,0.02)'}
                       onMouseLeave={e => e.currentTarget.style.background = isMe ? 'rgba(16,185,129,0.04)' : 'transparent'}
                     >
                       <td style={{ padding: '0.85rem 1rem' }}>
-                        {i < 3 ? <span style={{ fontSize: '1.1rem' }}>{['🥇','🥈','🥉'][i]}</span> : <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '1.75rem', height: '1.75rem', borderRadius: '50%', background: 'var(--slate-100)', fontSize: '0.75rem', fontWeight: 700, color: 'var(--slate-600)' }}>{i + 1}</span>}
+                        {i < 3 ? <span style={{ fontSize: '1.1rem' }}>{['','🥈','🥉'][i]}</span> : <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '1.75rem', height: '1.75rem', borderRadius: '50%', background: 'var(--slate-100)', fontSize: '0.75rem', fontWeight: 700, color: 'var(--slate-600)' }}>{i + 1}</span>}
                       </td>
                       <td style={{ padding: '0.85rem 1rem' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
@@ -282,7 +280,7 @@ function formatDayLabel(isoDate) {
   return label.charAt(0).toUpperCase() + label.slice(1)
 }
 
-function Partidos({ currentUser, matches, users, onMatchesChange, currentSession }) {
+function Partidos({ currentUser, matches, users, onMatchesChange, currentSession, theme }) {
   const [selectedDay, setSelectedDay] = useState('')
   const [selectedGroup, setSelectedGroup] = useState('')
   const dayOptions = [...new Set(matches.map(match => match.dia))].sort()
@@ -304,7 +302,7 @@ function Partidos({ currentUser, matches, users, onMatchesChange, currentSession
     if (needsBet) {
       setTimeout(() => showToast(`⏰ ¡Recuerda apostar! ${needsBet.local} vs ${needsBet.visitante} se juega pronto`, '⏰'), 800)
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   let filteredMatches = matches
@@ -320,7 +318,7 @@ function Partidos({ currentUser, matches, users, onMatchesChange, currentSession
   const handleClear = async (matchId) => {
     await PredictionsApi.deletePrediction(currentSession?.user?.id, matchId)
     onMatchesChange()
-    showToast('Apuesta eliminada', '🗑️')
+    showToast('Apuesta eliminada', '️')
   }
 
   const userData = users.find(u => u.name === currentUser) || { bets: {} }
@@ -329,8 +327,7 @@ function Partidos({ currentUser, matches, users, onMatchesChange, currentSession
     <div style={{ position: 'relative', minHeight: '100vh', backgroundImage: `var(--bg-partidos, url(${fondoMundial}))`, backgroundSize: 'cover', backgroundPosition: 'center top', backgroundRepeat: 'no-repeat', backgroundAttachment: 'fixed' }}>
       <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(5,15,30,0.72) 0%, rgba(8,20,45,0.65) 50%, rgba(5,15,30,0.78) 100%)', pointerEvents: 'none', zIndex: 0 }} />
       <div style={{ position: 'relative', zIndex: 1, maxWidth: '80rem', margin: '0 auto', padding: '6rem 1rem 3rem' }}>
-        <ChampionBanner currentUser={currentUser} />
-
+        <ChampionBanner currentUser={currentUser} theme={theme} />
         <div style={{ marginBottom: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-end', justifyContent: 'space-between', gap: '1rem' }}>
             <div>
@@ -446,7 +443,6 @@ export default function App() {
         if (!usersMap[username]) usersMap[username] = { name: username, bets: {} }
         usersMap[username].bets[p.match_id] = { local: p.pred_goles_local, visitor: p.pred_goles_visitante }
       })
-      
       setMatches(mappedMatches)
       setUsers(Object.values(usersMap))
       setRooms(fetchedRooms)
@@ -461,7 +457,6 @@ export default function App() {
         setCurrentUser(name)
         setView(name === 'Proyecto' ? 'admin' : 'partidos')
         fetchData()
-        
         // Show guide if it's their first time logging in this device
         const hasSeenGuide = localStorage.getItem('hasSeenGuide_' + name)
         if (!hasSeenGuide && name !== 'Proyecto') {
@@ -474,7 +469,7 @@ export default function App() {
       }
     })
     return () => subscription.unsubscribe()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const guideSteps = [
@@ -486,8 +481,16 @@ export default function App() {
     { title: 'Administra tus apuestas', description: 'En Grupos y Partidos puedes ajustar tus pronósticos y seguir la evolución del torneo.', target: 'Menú Grupos' },
   ]
 
-  const handleLogin = () => {
-    // Handled by onAuthStateChange
+  const handleLogin = (name, isReservedAdmin = false) => {
+    if (!isReservedAdmin) {
+      // Regular users are handled by onAuthStateChange after Supabase login.
+      return
+    }
+
+    setCurrentSession(null)
+    setCurrentUser(name)
+    setView('admin')
+    fetchData()
   }
 
   const handleCloseGuide = () => {
@@ -504,13 +507,19 @@ export default function App() {
   }
 
   const handleLogout = async () => {
+    if (!currentSession && currentUser === 'Proyecto') {
+      setCurrentUser(null)
+      setView('login')
+      return
+    }
+
     await AuthApi.signOut()
   }
 
   const handleMatchesChange = useCallback(() => {
     fetchData()
     setRefreshKey(k => k + 1)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const cambiarTema = (tema) => {
@@ -522,68 +531,94 @@ export default function App() {
     { key: 'colombia', label: 'Colombia', icon: '●' },
   ]
 
+  const themeSwitcher = view !== 'login' && view !== 'admin' ? (
+    <div
+      className="theme-switcher"
+      aria-label="Selector de tema"
+      style={{
+        position: 'relative',
+        zIndex: 1,
+        flex: '0 0 auto',
+
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.25rem',
+
+        minHeight: '2.65rem',
+        padding: '0.25rem',
+
+        borderRadius: '999px',
+
+        background:
+          temaActual === 'colombia'
+            ? 'rgba(0, 20, 60, 0.92)'
+            : 'rgba(255,255,255,0.86)',
+
+        border:
+          temaActual === 'colombia'
+            ? '1px solid rgba(252,209,22,0.28)'
+            : '1px solid rgba(18,48,68,0.12)',
+
+        boxShadow:
+          temaActual === 'colombia'
+            ? '0 10px 24px rgba(0,0,0,0.24)'
+            : '0 10px 24px rgba(18,48,68,0.1)',
+
+        backdropFilter: 'blur(14px)',
+        WebkitBackdropFilter: 'blur(14px)',
+      }}
+    >
+      {themeOptions.map(option => {
+        const active = temaActual === option.key
+        return (
+          <button
+            key={option.key}
+            type="button"
+            onClick={() => cambiarTema(option.key)}
+            aria-pressed={active}
+            title={`Tema ${option.label}`}
+            style={{
+              minHeight: '2rem', padding: '0.35rem 0.72rem',
+              border: '1px solid transparent', borderRadius: '999px',
+              display: 'inline-flex', alignItems: 'center', gap: '0.38rem',
+              background: active ? (option.key === 'colombia' ? '#FCD116' : '#102a43') : 'transparent',
+              color: active ? (option.key === 'colombia' ? '#0a1628' : '#ffffff') : (temaActual === 'colombia' ? 'rgba(255,255,255,0.76)' : '#486581'),
+              fontFamily: 'inherit', fontSize: '0.78rem', fontWeight: 900,
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              transition: 'background 0.18s ease, color 0.18s ease, transform 0.18s ease',
+              boxShadow: active ? '0 8px 18px rgba(0,0,0,0.16)' : 'none',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)' }}
+            onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)' }}
+          >
+            <span style={{
+              width: '0.75rem', height: '0.75rem', borderRadius: '50%',
+              flex: '0 0 auto',
+              display: 'inline-grid', placeItems: 'center',
+              background: option.key === 'colombia'
+                ? 'linear-gradient(180deg, #FCD116 0 48%, #003893 48% 74%, #CE1126 74% 100%)'
+                : active ? '#ffffff' : '#d9e2ec',
+              color: 'transparent',
+              boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.08)',
+            }}>
+              {option.icon}
+            </span>
+            <span className="theme-switcher-label">Tema {option.label}</span>
+          </button>
+        )
+      })}
+    </div>
+  ) : null
+
   return (
     <div className="app-layout">
-      {view !== 'login' && view !== 'admin' && (
-        <div
-          className="theme-switcher"
-          aria-label="Selector de tema"
-          style={{
-            position: 'fixed', top: '0.75rem', right: '0.75rem', zIndex: 9999,
-            display: 'inline-flex', alignItems: 'center', gap: '0.25rem',
-            padding: '0.25rem', borderRadius: '999px',
-            background: temaActual === 'colombia' ? 'rgba(0, 20, 60, 0.92)' : 'rgba(255,255,255,0.86)',
-            border: temaActual === 'colombia' ? '1px solid rgba(252,209,22,0.28)' : '1px solid rgba(18,48,68,0.12)',
-            boxShadow: temaActual === 'colombia' ? '0 12px 30px rgba(0,0,0,0.28)' : '0 12px 30px rgba(18,48,68,0.12)',
-            backdropFilter: 'blur(14px)',
-          }}
-        >
-          {themeOptions.map(option => {
-            const active = temaActual === option.key
-            return (
-              <button
-                key={option.key}
-                type="button"
-                onClick={() => cambiarTema(option.key)}
-                aria-pressed={active}
-                style={{
-                  minHeight: '2rem', padding: '0.35rem 0.72rem',
-                  border: '1px solid transparent', borderRadius: '999px',
-                  display: 'inline-flex', alignItems: 'center', gap: '0.38rem',
-                  background: active ? (option.key === 'colombia' ? '#FCD116' : '#102a43') : 'transparent',
-                  color: active ? (option.key === 'colombia' ? '#0a1628' : '#ffffff') : (temaActual === 'colombia' ? 'rgba(255,255,255,0.76)' : '#486581'),
-                  fontFamily: 'inherit', fontSize: '0.78rem', fontWeight: 900,
-                  cursor: 'pointer',
-                  transition: 'background 0.18s ease, color 0.18s ease, transform 0.18s ease',
-                  boxShadow: active ? '0 8px 18px rgba(0,0,0,0.16)' : 'none',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)' }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)' }}
-              >
-                <span style={{
-                  width: '0.75rem', height: '0.75rem', borderRadius: '50%',
-                  display: 'inline-grid', placeItems: 'center',
-                  background: option.key === 'colombia'
-                    ? 'linear-gradient(180deg, #FCD116 0 48%, #003893 48% 74%, #CE1126 74% 100%)'
-                    : active ? '#ffffff' : '#d9e2ec',
-                  color: 'transparent',
-                  boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.08)',
-                }}>
-                  {option.icon}
-                </span>
-                Tema {option.label}
-              </button>
-            )
-          })}
-        </div>
-      )}
       {/* Decoraciones del tema Colombia */}
       <div className="fondo-tema"></div>
       <div className="decoracion-tema decoracion-izquierda"></div>
       <div className="decoracion-tema decoracion-derecha"></div>
-
       {view !== 'login' && (
-        <Header currentUser={currentUser} view={view} onNavigate={setView} onLogout={handleLogout} />
+        <Header currentUser={currentUser} view={view} onNavigate={setView} onLogout={handleLogout} theme={temaActual} themeSwitcher={themeSwitcher} />
       )}
 
       <main className="page-content">
@@ -595,6 +630,7 @@ export default function App() {
             users={users}
             onMatchesChange={handleMatchesChange}
             currentSession={currentSession}
+            theme={temaActual}
             key={refreshKey}
           />
         )}
@@ -604,6 +640,7 @@ export default function App() {
             matches={matches}
             users={users}
             onMatchesChange={handleMatchesChange}
+            theme={temaActual}
             key={refreshKey}
           />
         )}
@@ -631,7 +668,7 @@ export default function App() {
           <Eliminatorias theme={temaActual} />
         )}
         {view === 'admin' && currentUser === 'Proyecto' && (
-          <Admin matches={matches} onMatchesChange={handleMatchesChange} />
+          <Admin matches={matches} users={users} onMatchesChange={handleMatchesChange} />
         )}
         {view === 'admin' && currentUser !== 'Proyecto' && <Inicio onLogin={handleLogin} />}
       </main>
